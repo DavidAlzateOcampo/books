@@ -1,0 +1,126 @@
+# **40 Algorithms Every Data Scientist Should Know**
+
+- Supervised Learning
+  - Linear regression
+    - OLS method
+    - O(n \cdot p^2)
+  - Logistic regression
+    - Binary classification
+    - Sigmoid function
+  - Decision trees
+    - Gini/Entropy
+    - Interpretable
+  - Random forests
+    - Ensemble method
+    - Reduced variance
+  - Support Vector Machine
+    - Max margin
+    - Kernel trick
+  - Naive Bayes
+    - Bayes theorem
+    - Feature independence
+  - k-Nearest Neighbors
+    - Distance-based
+    - Lazy learning
+  - Neural networks
+    - Deep layers
+    - Non-linear patterns
+  - Gradient Boosting Machines
+    - Sequential boosting
+    - Error correction
+  - XGBoost
+    - Parallelized GBM
+    - Regularized
+- Unsupervised Learning
+  - K-means clustering
+    - Centroid-based
+    - Fast & Scalable
+  - Hierarchical clustering
+    - Dendrogram
+    - Agglomerative/Divisive
+  - Principal Component Analysis
+    - Dim reduction
+    - Feature extraction
+  - t-Distributed Stochastic Neighbor Embedding
+    - Non-linear visualization
+    - Local structure
+  - Association Rule Mining
+    - Apriori algorithm
+    - Market basket
+  - DBSCAN
+    - Density-based
+    - Handles noise
+  -Gaussian Mixture Models
+    - Probabilistic
+    - Expectation-Maximization
+  - Autoencoders
+    - Neural compression
+    - Feature learning
+  - Anomaly detection
+    - Outlier identification
+    - Isolation Forest
+  - Latent Dirichlet Allocation
+    - Topic modeling
+    - Document analysis
+- Reinforcement Learning
+  - Q-Learning
+    - Model-free
+    - Action-value (Q)
+  - Deep Q-Networks
+    - Neural Q-learning
+    - Experience replay
+  - Policy gradient methods
+    - Direct optimization
+    - Continuous spaces
+  - Advantage Actor-Critic
+    - Synchronous A2C
+    - Advantage function
+  - Trust Region Policy Optimization
+    - Trust region
+    - Monotonic improvement
+  - Asynchronous Advantage Actor-Critic
+    - Async workers
+    - Global model updates
+  - Proximal Policy Optimization
+    - Clipped objective
+    - Stable & Reliable
+  - Deep Deterministic Policy Gradient
+    - Continuous actions
+    - Actor-critic
+  - Twin Delayed Deep Deterministic Policy Gradient
+    - Addressed overestimation
+    - Twin Q-nets
+  - Soft Actor-Critic
+    - Entropy regularization
+    - Maximum entropy
+- Semi-supervised Learning
+  - Self-training
+    - Pseudo-labeling
+    - Iterative refinement
+  - Co-training
+    - Two independent views
+    - Mutual teaching
+  - Multi-view learning
+    - Diverse feature sets
+    - Fused insights
+  - Expectation-Maximization
+    - Latent variables
+    - Maximum likelihood
+  - Graph-based methods
+    - Similarity graph
+    - Label propagation
+  - Transductive Support Vector Machines
+    - Max margin on unlabeled
+    - Transductive
+  - Co-regularization
+    - View consistency
+    - Penalty for disagreement
+  - Deep generative models
+    - GANs & VAEs
+    - Sample generation
+  - Virtual Adversarial Training
+    - Adversarial robustness
+    - Perturbations
+  - Tri-training
+    - Three classifiers
+    - Majority voting
