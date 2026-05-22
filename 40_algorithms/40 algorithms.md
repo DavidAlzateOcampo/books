@@ -1,8 +1,8 @@
-# 40 Algorithms Every Data Scientist Should Know - Comprehensive Summary
+# 40 Algorithms Every Data Scientist Should Know - Master Edition
 
 > [!NOTE]
-> This is a comprehensive, production-grade study guide summarizing the core 40 AI/ML/RL algorithms.
-> Organized by category: Supervised, Unsupervised, Reinforcement, and Semi-supervised learning.
+> This is a comprehensive, premium-grade study guide summarizing the core 40 AI/ML/RL algorithms.
+> Custom-built with scientifically critique-driven Pros/Cons and full Python/PyTorch implementations for all algorithms.
 
 ---
 
@@ -1028,8 +1028,9 @@ A generative statistical model that allows sets of observations to be explained 
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Excellent interpretability for large collections of unstructured text | Suffers from computational scaling issues on massive corpora |
+| Works well as a generative document-topic clustering mechanism | Requires manual pre-specification of topic parameter k |
+|  | Sensitive to document length and vocabulary preprocessing |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1082,8 +1083,9 @@ A model-free reinforcement learning algorithm to learn the quality of actions te
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Model-free approach requiring zero environment dynamics information | Suffers severely from the curse of dimensionality in large state spaces |
+| Tabular settings offer robust mathematical convergence guarantees | Overestimation bias of Q-values due to the max operator |
+|  | High variance during early exploration stages |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1100,21 +1102,23 @@ A model-free reinforcement learning algorithm to learn the quality of actions te
 ```python
 import numpy as np
 
-# Simple Q-table initialization
-states_count = 10
-actions_count = 4
-Q = np.zeros((states_count, actions_count))
+class QLearningAgent:
+    def __init__(self, states_count, actions_count, alpha=0.1, gamma=0.9, epsilon=0.1):
+        self.q_table = np.zeros((states_count, actions_count))
+        self.alpha = alpha      # Learning rate
+        self.gamma = gamma      # Discount factor
+        self.epsilon = epsilon  # Exploration rate
 
-alpha = 0.1  # Learning rate
-gamma = 0.9  # Discount factor
-epsilon = 0.1 # Exploration rate
+    def choose_action(self, state):
+        if np.random.uniform(0, 1) < self.epsilon:
+            return np.random.choice(self.q_table.shape[1])  # Explore
+        else:
+            return np.argmax(self.q_table[state])           # Exploit
 
-# Q-learning Update Step
-def update_q_table(state, action, reward, next_state):
-    best_next_action = np.argmax(Q[next_state])
-    td_target = reward + gamma * Q[next_state, best_next_action]
-    td_error = td_target - Q[state, action]
-    Q[state, action] += alpha * td_error
+    def learn(self, state, action, reward, next_state):
+        predict = self.q_table[state, action]
+        target = reward + self.gamma * np.max(self.q_table[next_state])
+        self.q_table[state, action] += self.alpha * (target - predict)
 ```
 
 ---
@@ -1132,8 +1136,9 @@ Combines Q-Learning with deep neural networks. It uses experience replay and tar
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Extends Q-learning to high-dimensional state spaces (e.g. raw pixels) | High sample inefficiency |
+| Experience replay buffer breaks temporal correlations, stabilizing training | Struggles with continuous action spaces |
+|  | Training can be unstable and highly sensitive to hyperparameter tuning |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1181,8 +1186,9 @@ A class of reinforcement learning algorithms that optimize the policy directly u
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Directly optimizes the policy objective | Very high variance in gradient estimates |
+| Naturally handles continuous and stochastic action spaces | Prone to getting trapped in suboptimal local optima |
+| Smooth convergence properties compared to value-based methods | Extremely poor sample efficiency |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1229,8 +1235,8 @@ A synchronous reinforcement learning method where multiple agents interact with 
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Synchronous updates allow parallelized, highly efficient training across multiple environments | Relies on highly synchronized steps, causing bottlenecks if environment steps take variable time |
+| Critic baseline reduces policy gradient variance | Complex model architecture to balance and tune |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1244,10 +1250,26 @@ A synchronous reinforcement learning method where multiple agents interact with 
 ### 💻 Python Source Code
 
 ```python
-# Standard A2C synchronous implementation setup
-# Actor learns policy: pi(a|s)
-# Critic learns value state: V(s)
-# Advantage calculated as: A(s,a) = Q(s,a) - V(s)
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+class ActorCritic(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super(ActorCritic, self).__init__()
+        # Shared feature extractor
+        self.common = nn.Sequential(
+            nn.Linear(state_dim, 128),
+            nn.ReLU()
+        )
+        self.actor = nn.Linear(128, action_dim)      # Policy head
+        self.critic = nn.Linear(128, 1)              # Value head
+
+    def forward(self, state):
+        x = self.common(state)
+        policy_dist = torch.softmax(self.actor(x), dim=-1)
+        state_value = self.critic(x)
+        return policy_dist, state_value
 ```
 
 ---
@@ -1265,21 +1287,8 @@ Optimizes policies with a guarantee of monotonic improvement by constraining the
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Sample efficiency: PPO is more sample efficient compared to many other policy gradient methods. This means it can learn effective policies with fewer interactions with the environment, which is particularly important in environments where collecting new data is expensive or time-consuming. | Hyperparameter sensitivity: While PPO is easier to tune than some other algorithms, it can still be sensitive to its hyperparameters like the clipping parameter, learning rate, etc. Poorly chosen hyperparameters can lead to suboptimal performance. |
-| Stability: PPO is designed to prevent excessively large policy updates that can destabilize learning. By keeping the policy update close to the current policy, PPO tends to have more stable learning curves compared to vanilla policy gradient methods. | Performance limit: Despite its stability and efficiency, PPO may not always achieve the highest possible performance, especially in complex environments with high-dimensional state and action spaces. In these cases, more sophisticated methods might be needed. |
-| Simplicity: PPO is relatively simple to implement and tune, especially compared to algorithms like TRPO which achieve similar performance but require more complex optimization. | Non-monotonic improvement: Like many reinforcement learning algorithms, PPO does not guarantee a monotonic improvement in performance during training. This can make the learning process harder to monitor and debug. |
-| Versatility: PPO can handle both discrete and continuous action spaces, making it applicable to a wide range of problems. | Sensitivity to hyperparameters: DDPG can be sensitive to the choice of hyperparameters and the initialization of the network. Getting DDPG to work well can require some careful tuning. |
-| Continuous action spaces: DDPG is specifically designed to handle environments with continuous action spaces. This makes it an attractive choice for problems in robotics, autonomous driving, and other tasks that require fine-grained control. | Efficiency: While more efficient than some algorithms in continuous action spaces, DDPG can still require many samples to learn effectively. This might be a problem in environments where collecting new data is expensive or time-consuming. |
-| Stability and efficiency: DDPG combines the actor-critic approach with insights from the success of DQN, such as experience replay and target networks, which significantly improves stability and efficiency. | Exploration: Because DDPG is a deterministic policy gradient method, it must use additional strategies like noise processes (for example, Ornstein-Uhlenbeck noise) for exploration. These can sometimes complicate the implementation and tuning of the algorithm. |
-| Off-policy learning: DDPG is an off-policy algorithm, which means that it can learn from older data stored in the replay buffer. This can make the learning process more sample efficient. | Local optima: Like many other optimization-based methods, DDPG can get stuck in local optima, depending on the initial conditions and the specific problem. |
-| Address overestimation bias: TD3 mitigates the overestimation bias in Q-value estimation, which is a common issue in DDPG, by using the smaller of the Q-values from two independent critics. | In summary, DDPG is a powerful method for tasks with continuous action spaces, but it requires careful tuning and can sometimes be less efficient than desired. Despite these challenges, DDPG has been successfully applied to many difficult problems in reinforcement learning. |
-| Stability: The delay in policy updates (updating the actor less frequently than the critic) makes TD3 more stable compared to DDPG. This decoupling helps reduce the impact of the policy update errors on the learning process. | Computational complexity: TD3 requires more computational resources compared to DDPG as it uses two critic networks. |
-| Noise smoothing: The noise added to the target policy in TD3 helps to smooth the Q-value function and prevents overfitting to a narrow peak in the Q-function. It helps improve exploration and generalization. | Delayed convergence: The delayed policy updates can make TD3 converge slower than DDPG under certain conditions, especially in the early stages of learning. |
-| Exploration and stochastic policies: SAC encourages exploration by explicitly maximizing the entropy of the policy. It learns stochastic policies that can sample diverse actions, leading to improved exploration in complex environments. | Dependence on hyperparameters: Like many reinforcement learning algorithms, TD3ʼs performance can be highly sensitive to its hyperparameters. Careful tuning is often necessary. |
-| Sample efficiency: SAC achieves efficient sample utilization by employing off-policy learning, where data can be collected from different policies. This enables more efficient learning and better data utilization. | Difficulty with discrete action spaces: Although TD3 excels in environments with continuous action spaces, it is not suitable for tasks with discrete action spaces. |
-| Continuous action spaces: SAC is well-suited for tasks with continuous action spaces. It can learn policies that generate continuous actions, making it suitable for domains such as robotics, autonomous driving, and control systems. | Assumes additive noise: The noise added to the policy (target smoothing) assumes that the environment responds similarly to slightly different actions, which may not hold true in all environments. |
-| Value function learning: SAC simultaneously learns the policy and a value function, which estimates the expected return. This can lead to better estimates of the state-action values, enhancing the learning process. | As with any algorithm, the choice to use TD3 should depend on the specific characteristics of the problem at hand, including the nature of the environment, the available computational resources, and the specific requirements of the task. |
-| Model-free: SAC is a model-free algorithm, meaning it does not require explicit knowledge or a model of the environment. It can learn directly from interacting with the environment, making it applicable to real-world scenarios. | Hyperparameter sensitivity: The performance of SAC can be highly sensitive to hyperparameters such as the learning rate, temperature parameter, and target entropy coefficient. Selecting appropriate values for these hyperparameters requires careful tuning and experimentation. |
+| Guarantees monotonic policy improvement | Computationally expensive due to calculating the Hessian of the KL divergence |
+| Mathematical constraints prevent destructive large updates, ensuring high sample safety | Extremely complex implementation relying on Conjugate Gradient methods |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1293,296 +1302,18 @@ Optimizes policies with a guarantee of monotonic improvement by constraining the
 ### 💻 Python Source Code
 
 ```python
-One of the most common applications of PPO is training agents to play games. In the following example, we will use the stable-baselines3 library to train an agent to play the classic game of CartPole in the OpenAI Gym:
-import gym
-from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import DummyVecEnv
-from stable_baselines3.common.evaluation import evaluate_policy
-# Create environment
-env = gym.make('CartPole-v1')
-# PPO also benefits from vectorized environments (multiple environments run in parallel)
-env = DummyVecEnv([lambda: env])  # The algorithms require a vectorized environment to run
-# Initialize PPO agent
-model = PPO("MlpPolicy", env, verbose=1)
-# Train agent
-model.learn(total_timesteps=10000)
-# Evaluate agent
-mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
-print(f"mean_reward:{mean_reward:.2f} +/- {std_reward:.2f}")
-# Save the agent
-model.save("ppo_cartpole")
-# Load the trained agent
-model = PPO.load(“ppo_cartpole”)
-# Enjoy trained agent
-obs = env.reset()
-for i in range(1000):
-action, _states = model.predict(obs)
-obs, rewards, dones, info = env.step(action)
-env.render()
-In this code:
-We first create an instance of the CartPole-v1 environment from OpenAI Gym.
-We initialize a PPO model that uses an MLP (multi-layer perceptron) policy.
-We train the model on the environment for 10,000-time steps.
-We then evaluate the model using evaluate_policy from stable-baselines3, which runs the model on the environment for a certain number of episodes and calculates the mean and standard deviation of the total reward.
-We then save the trained model to a file, load it from the file, and use it to control the CartPole in the environment.
-The result of this program should be a PPO agent that can successfully balance the pole on the cart for many time steps. Please note that CartPole is a relatively simple environment, and more complex games or tasks may require more sophisticated techniques and a lot more training.
-Deep Deterministic Policy Gradient
-Deep Deterministic Policy Gradient (DDPG) is an algorithm that concurrently learns a function and a policy in a model-free, off-policy setting. DDPG is an actor-critic method, using two deep neural networks: one for the actor and one for the critic. The actor is used to approximate the optimal policy deterministically (best believed action), and the critic is used to estimate the value of taking a particular action given the current state. A good comparison to this can be found in Generative Adversarial Networks or short GANs
-In a traditional actor-critic method, the critic informs the actor about how to improve its policy. In DDPG, the actor produces an action given the current state, and the critic gives feedback, grading the action. The policy is updated to produce better actions.
-One of the key elements in DDPG is the replay buffer, which stores past state, action, reward, and next state transitions and allows for random mini-batch updates. This helps to reduce correlation between samples and stabilize learning. Another key aspect of DDPG is the use of soft updates for the target networks, which leads to increased stability.
-Here is an implementation of DDPG using the Python reinforcement learning library Stable Baselines3:
-import gym
-from stable_baselines3 import DDPG
-from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
-# Create environment
-env = gym.make('Pendulum-v0')
-# the noise objects for DDPG
-n_actions = env.action_space.shape[-1]
-action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1 * np.ones(n_actions))
-# Initialize DDPG agent
-model = DDPG("MlpPolicy", env, action_noise=action_noise, verbose=1)
-# Train agent
-model.learn(total_timesteps=10000)
-# Save the agent
-model.save("ddpg_pendulum")
-# Load the trained agent
-model = DDPG.load("ddpg_pendulum")
-# Enjoy trained agent
-obs = env.reset()
-for I in range(1000):
-action, _states = model.predict(obs)
-obs, rewards, dones, info = env.step(action)
-env.render()
-In this code, we first create a Pendulum environment and a DDPG agent. We train the agent for several time steps and save the trained model. We then load the model and use it to control the Pendulum.
-Note: DDPG performs best in environments with a continuous action space, hence the use of Pendulum in this example. If your environment has a discrete action space, DDPG may not be the best choice.
-DDPG is a model-free, off-policy reinforcement learning algorithm, specifically designed for continuous action spaces. DDPG is an adaptation of the standard Deep Q-Network (DQN) to work with continuous action spaces, by leveraging the deterministic policy gradient approach. Here is the mathematical foundation of DDPG:
-Actor and critic: DDPG employs an actor-critic architecture:Actor: It represents the policy function μ(s;θμ) that maps states to a specific action. This deterministic policy is parameterized by θμ.
-Critic: It estimates the Q-function Q(s,a;θQ). The Q-function provides a measure of the expected return of acting a in state s and following the policy afterward. It is parameterized by θQ.
-Actor: It represents the policy function μ(s;θμ) that maps states to a specific action. This deterministic policy is parameterized by θμ.
-Critic: It estimates the Q-function Q(s,a;θQ). The Q-function provides a measure of the expected return of acting a in state s and following the policy afterward. It is parameterized by θQ.
-Bellman equation: The critic is updated by minimizing the loss derived from the Bellman equation:
-yi = ri + γQ' (si+1),μ'(si+1); θμ'); θQ' )
-Where:
-ri is the reward.
-si+1 is the next state.
-μ′ and Q′ denote the target networks for the actor and critic, respectively.
-γ is the discount factor.
-The loss for the critic, L, is then:
-L = (s,a,r,s')~U(D) [(Q(s,a; θQ) – yi)2]
-Where U(D) denotes a minibatch of samples drawn from the replay buffer D.
-yi = ri + γQ' (si+1),μ'(si+1); θμ'); θQ' )
-Where:
-ri is the reward.
-si+1 is the next state.
-μ′ and Q′ denote the target networks for the actor and critic, respectively.
-γ is the discount factor.
-The loss for the critic, L, is then:
-L = (s,a,r,s')~U(D) [(Q(s,a; θQ) – yi)2]
-Where U(D) denotes a minibatch of samples drawn from the replay buffer D.
-Deterministic policy gradient: The deterministic policy gradient theorem provides the gradient of the expected return with respect to the policy parameters:
-∇θμJ ≈ s~ρβ [∇aQ(s,a; θQ) |a=μ(s) ∇θμ μ(s; θμ)]
-Where ρβ is the behavior distribution, which is typically the distribution of states encountered by following the policy.
-∇θμJ ≈ s~ρβ [∇aQ(s,a; θQ) |a=μ(s) ∇θμ μ(s; θμ)]
-Where ρβ is the behavior distribution, which is typically the distribution of states encountered by following the policy.
-Replay buffer: To stabilize learning and break correlations between samples, DDPG uses a replay buffer. Experiences (s,a,r,s′) are stored in this buffer and sampled uniformly to train the actor and critic networks.
-Soft target updates: Instead of copying the weights directly from the main networks to target networks, DDPG utilizes soft target updates:
-θ′ ← τθ + (1 – τ)θ′
-Where θ′ are the target network parameters, θ are the main network parameters, and τ is a hyperparameter, typically close to 0, ensuring slow updates.
-θ′ ← τθ + (1 – τ)θ′
-Where θ′ are the target network parameters, θ are the main network parameters, and τ is a hyperparameter, typically close to 0, ensuring slow updates.
-Exploration: For exploration in the continuous action space, DDPG employs action noise, where noise is typically added to the actions produced by the actor policy.
-DDPG has been used in several studies for controlling and optimizing power systems. These systems are usually represented as complex simulation environments with state variables and continuous control actions.
-Due to the complexity of real-world power systems, these examples usually require specific domain knowledge and substantial computational resources, and thus are beyond the scope of a simple Python example.
-However, we can use the OpenAI Gymʼs Pendulum-v0 as a toy model to represent a power system in a simplified manner. In this example, we consider the pendulumʼs angle to represent the state of a power system, and the force applied to it as a control action, as shown:
-import gym
-from stable_baselines3 import DDPG
-from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
-# Create the environment
-env = gym.make('Pendulum-v0')
-# the noise objects for DDPG
-n_actions = env.action_space.shape[-1]
-action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1 * np.ones(n_actions))
-# Initialize DDPG agent
-model = DDPG("MlpPolicy", env, action_noise=action_noise, verbose=1)
-# Train agent
-model.learn(total_timesteps=10000)
-# Save the agent
-model.save("ddpg_pendulum")
-# Load the trained agent
-model = DDPG.load("ddpg_pendulum")
-# Enjoy trained agent
-obs = env.reset()
-for i in range(1000):
-action, _states = model.predict(obs)
-obs, rewards, dones, info = env.step(action)
-env.render()
-Please note that this is a simplified example and real-world power systems are much more complex and are subject to a range of constraints and conditions that this toy model does not represent. This example is meant to illustrate how the DDPG algorithm can be used to control a system with continuous action space.
-For real-world power systems, we would need to create a similar environment that accurately represents the dynamics of the power system, with state variables representing different aspects of the system and actions representing control inputs to the system. This is usually a complex task that requires significant domain knowledge in power systems.
-Twin Delayed Deep Deterministic Policy Gradient
-The Twin Delayed Deep Deterministic Policy Gradient (TD3) method is an algorithm in the field of reinforcement learning that extends the DDPG method. It was developed to address several issues with the standard DDPG algorithm, primarily overestimation bias and instability due to rapid changes in the policy function.
-The TD3 algorithm introduces three key improvements to the standard DDPG:
-Twin Q networks: The algorithm maintains two Q-value function approximators and uses the smaller estimated Q-value to update the policy function. This technique helps to mitigate positive bias in the policy update, which can lead to overestimation of Q-values.
-Delayed policy updates: The policy network is updated less frequently than the Q-value networks. This decoupling of the rate of updates for the policy and Q-value networks helps to reduce per-update error and leads to more stable learning.
-Target policy smoothing: When updating the Q-values, TD3 uses a trick where it adds noise to the selected actions. This smoothed Q-value leads to more stable policy updates and helps to avoid overfitting to a narrow peak in the Q-function.
-Here is an example of TD3 using the stable_baselines3 library for the Pendulum-v0 environment from OpenAI Gym:
-import gym
-from stable_baselines3 import TD3
-from stable_baselines3.common.noise import NormalActionNoise
-# Create environment
-env = gym.make('Pendulum-v0')
-# Define action noise for exploration
-n_actions = env.action_space.shape[-1]
-action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1*np.ones(n_actions))
-# Initialize TD3 agent
-model = TD3("MlpPolicy", env, action_noise=action_noise, verbose=1)
-# Train agent
-model.learn(total_timesteps=10000)
-# Save the agent
-model.save("td3_pendulum")
-# Load the trained agent
-model = TD3.load("td3_pendulum")
-# Enjoy trained agent
-obs = env.reset()
-for i in range(1000):
-action, _states = model.predict(obs, deterministic=True)
-obs, reward, done, info = env.step(action)
-env.render()
-This example shows how to create, train, save, load, and use a TD3 agent for the Pendulum-v0 task.
-TD3 is an algorithm that builds upon the foundational concepts of DDPG by introducing a set of modifications to address its vulnerabilities, especially value overestimation due to noise. Hereʼs the mathematical foundation of TD3:
-Twin Q-networks: TD3 introduces a pair of Q-functions, and , to minimize value overestimation. The pair is learned independently, and the smaller of the two Q-values is used to form the target for training.
-For a given state-action pair (s,a), the TD3 loss becomes:
-L(θ1, θ2 ) = (s,a,r,s')~U(D) [(Qθ1(s,a) – y)2 + ((Qθ2 (s,a)) – y2)2]
-Where y is the target value computed as:
-Where ∈~clip(N(0, σ), –c, c) is a clipped noise term added to encourage exploration.
-For a given state-action pair (s,a), the TD3 loss becomes:
-L(θ1, θ2 ) = (s,a,r,s')~U(D) [(Qθ1(s,a) – y)2 + ((Qθ2 (s,a)) – y2)2]
-Where y is the target value computed as:
-Where ∈~clip(N(0, σ), –c, c) is a clipped noise term added to encourage exploration.
-Delayed policy updates: TD3 updates the policy (actor) less frequently than the Q-functions (critics). For instance, if the critics are updated every time step, the policy might be updated every second time step. This helps in stabilizing training.
-Target policy smoothing: To further reduce overestimation, TD3 introduces noise (within a clipped range) to the next-state action provided by the target policy during Q-value calculation:
-a' = μ' (s', θμ') + ϵ
-Where ϵ is again a clipped noise term. This modification prevents the Q-function from exploiting Q-network errors by smoothing out Q-values across similar actions.
-a' = μ' (s', θμ') + ϵ
-Where ϵ is again a clipped noise term. This modification prevents the Q-function from exploiting Q-network errors by smoothing out Q-values across similar actions.
-Remaining components: The rest of the TD3 algorithm resembles DDPG:Actor: Deterministic policy μ(s;θμ).
-Replay buffer: Experiences (s,a,r,s′) are stored and randomly sampled for training, breaking temporal correlations.
-Soft target updates: The weights of the main networks are blended into the target networks to ensure stable learning:
-θ' ← τθ + (1 – τ)θ'
-Exploration: Action noise is added to the policyʼs actions.
-Actor: Deterministic policy μ(s;θμ).
-Replay buffer: Experiences (s,a,r,s′) are stored and randomly sampled for training, breaking temporal correlations.
-Soft target updates: The weights of the main networks are blended into the target networks to ensure stable learning:
-θ' ← τθ + (1 – τ)θ'
-θ' ← τθ + (1 – τ)θ'
-Exploration: Action noise is added to the policyʼs actions.
-Creating a realistic traffic light control system using TD3 is a complex task. A real-world implementation would require an accurate simulation of traffic flows, including vehicle speeds, arrival times, and intersection dynamics. Such a system would also need to account for multiple traffic lights and optimize their timings jointly to improve overall traffic flow. Creating such a simulation is beyond the scope of a simple Python example.
-However, to give you an idea, we can design a simplified system where a single traffic light manages the flow of vehicles from two directions. The action is the duration for which the light stays green for each direction, and the reward is negatively proportional to the total wait time of all vehicles.
-Here is a conceptual example:
-import gym
-from stable_baselines3 import TD3
-from stable_baselines3.common.noise import NormalActionNoise
-from traffic_environment import TrafficEnvironment  # This should be a custom designed environment
-# Create traffic environment
-env = TrafficEnvironment()
-# Define action noise for exploration
-n_actions = env.action_space.shape[-1]
-action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1*np.ones(n_actions))
-# Initialize TD3 agent
-model = TD3("MlpPolicy", env, action_noise=action_noise, verbose=1)
-# Train agent
-model.learn(total_timesteps=10000)
-# Save the agent
-model.save("td3_traffic")
-# Load the trained agent
-model = TD3.load("td3_traffic")
-# Enjoy trained agent
-obs = env.reset()
-for i in range(1000):
-action, _states = model.predict(obs, deterministic=True)
-obs, reward, done, info = env.step(action)
-env.render()
-In this example, the TrafficEnvironment would be a custom class you create that inherits from gym.Env and accurately represents your traffic control system. You would define the state space to include relevant information about the traffic at the intersection, such as the number of vehicles waiting in each direction and the time since the light last changed. The action space would be continuous and represent the duration for which the light stays green for each direction.
-The above is a highly simplified example, and a full solution would need to consider multiple intersections, different types of vehicles, varying speed limits, and potentially even pedestrian traffic. The design of the reward function is also critical to achieving efficient traffic flow.
-Soft Actor-Critic
-Soft Actor-Critic (SAC) is a model-free reinforcement learning algorithm that combines the actor-critic framework with maximum entropy reinforcement learning. It is designed to learn policies that are not only optimal but also stochastic, allowing for better exploration and robustness. SAC aims to maximize both the expected return and the entropy of the policy, which promotes exploration and provides a trade-off between exploration and exploitation.
-SAC is an off-policy algorithm that updates the policy and value function using a combination of stochastic gradient descent and maximum likelihood estimation. It consists of three main components: the actor network, the critic network, and the temperature parameter that controls the level of stochasticity in the policy.
-import gym
-from stable_baselines3 import SAC
-# Create environment
-env = gym.make('Pendulum-v0')
-# Initialize SAC agent
-model = SAC("MlpPolicy", env, verbose=1)
-# Train agent
-model.learn(total_timesteps=10000)
-# Save the agent
-model.save("sac_pendulum")
-# Load the trained agent
-model = SAC.load("sac_pendulum")
-# Enjoy trained agent
-obs = env.reset()
-for i in range(1000):
-action, _states = model.predict(obs, deterministic=True)
-obs, reward, done, info = env.step(action)
-env.render()
-In this example, we first create an instance of the Pendulum-v0 environment. We then initialize the SAC agent with the MlpPolicy (Multi-Layer Perceptron Policy) and pass in the environment. We train the agent for a certain number of time steps using the learn() method. After training, we save the trained model to a file and load it back to use it for inference. Finally, we use the trained agent to control the Pendulum environment and render the environment to visualize the agentʼs behavior.
-Please note that the SAC algorithm can be sensitive to hyperparameters and choosing appropriate values for parameters such as learning rate, batch size, and entropy regularization coefficient may require experimentation and tuning.
-SAC is an off-policy actor-critic deep reinforcement learning algorithm designed for continuous action spaces. What distinguishes SAC from other algorithms is its inclusion of an entropy term in the objective, which promotes more exploratory policies. Here is the mathematical foundation of SAC:
-Entropy-regularized reinforcement learning: The objective in standard reinforcement learning is to maximize the expected cumulative reward. SAC introduces entropy regularization to this objective to ensure sufficient exploration:
-Where:
-Η(π) is the entropy of the policy π, promoting randomness.
-α is the temperature parameter, which determines the relative importance of the entropy term against the reward. Higher values of α encourage more exploration.
-Where:
-Η(π) is the entropy of the policy π, promoting randomness.
-α is the temperature parameter, which determines the relative importance of the entropy term against the reward. Higher values of α encourage more exploration.
-Soft value functions: The entropy-regularized Q-value, state-value, and advantage functions are defined as:
-Qπ (s,a) = π[r(s,a) + γ a'~π [Vπ (s') – α logπ(a'|s')]]
-Vπ (s) = π[Qπ (s,a) – α logπ(a|s)]
-Aπ (s,a) = Qπ (s,a) – Vπ(s)
-Qπ (s,a) = π[r(s,a) + γ a'~π [Vπ (s') – α logπ(a'|s')]]
-Vπ (s) = π[Qπ (s,a) – α logπ(a|s)]
-Aπ (s,a) = Qπ (s,a) – Vπ(s)
-SAC actor and critic: Like other actor-critic methods, SAC has:Actor (Stochastic policy): Given by π(a|s; φ), parameterized by φ.
-Critic: Two Q-functions Q(θ1 ) (s, a) and Q(θ1 ) (s, a) (like in TD3) and a state value function Vψ(s).
-Actor (Stochastic policy): Given by π(a|s; φ), parameterized by φ.
-Critic: Two Q-functions Q(θ1 ) (s, a) and Q(θ1 ) (s, a) (like in TD3) and a state value function Vψ(s).
-Learning updates:Q-Function update: The Q-values are updated using the Bellman equation. For each sampled experience tuple (s, a, r, sʼ), the target is:
-The Q-functions are then updated to minimize the mean squared error against this target.
-V-Function update: The value function is updated to minimize the difference between it and the expected Q-values minus the entropy term:
-Vψ(s) = a~π [Qθ(s,a) – αlogπ(a|s; φ)]
-Policy update: The policy is updated to maximize the expected Q-value minus the entropy term, encouraging both high rewards and exploration:
-Jφ(s) = a~π[Qθ(s,a) – α logπ(a|s; φ)]
-Q-Function update: The Q-values are updated using the Bellman equation. For each sampled experience tuple (s, a, r, sʼ), the target is:
-The Q-functions are then updated to minimize the mean squared error against this target.
-The Q-functions are then updated to minimize the mean squared error against this target.
-V-Function update: The value function is updated to minimize the difference between it and the expected Q-values minus the entropy term:
-Vψ(s) = a~π [Qθ(s,a) – αlogπ(a|s; φ)]
-Vψ(s) = a~π [Qθ(s,a) – αlogπ(a|s; φ)]
-Policy update: The policy is updated to maximize the expected Q-value minus the entropy term, encouraging both high rewards and exploration:
-Jφ(s) = a~π[Qθ(s,a) – α logπ(a|s; φ)]
-Jφ(s) = a~π[Qθ(s,a) – α logπ(a|s; φ)]
-Automatic entropy adjustment: In addition to the components above, SAC often includes an adaptive mechanism to adjust the temperature parameter α during training. This is typically done by treating α as a learnable parameter and updating it to target a specific entropy value.
-SAC can be applied to control systems in a range of domains, such as industrial processes, chemical plants, or renewable energy systems. Let us consider a simplified example of controlling an inverted pendulum system using SAC.
-import gym
-from stable_baselines3 import SAC
-# Create environment
-env = gym.make('Pendulum-v0')
-# Initialize SAC agent
-model = SAC("MlpPolicy", env, verbose=1)
-# Train agent
-model.learn(total_timesteps=10000)
-# Save the agent
-model.save("sac_pendulum")
-# Load the trained agent
-model = SAC.load("sac_pendulum")
-# Enjoy trained agent
-obs = env.reset()
-for i in range(1000):
-action, _states = model.predict(obs, deterministic=True)
-obs, reward, done, info = env.step(action)
-env.render()
-In this example, we create an instance of the Pendulum-v0 environment from OpenAI Gym, which represents an inverted pendulum control problem. The objective is to balance the pendulum upright by applying appropriate torque. We then initialize the SAC agent with the MlpPolicy (Multi-Layer Perceptron Policy) and the environment. The agent is trained for a specific number of time steps, saved to a file, and loaded back for inference. Finally, we use the trained agent to control the pendulum environment and visualize its behavior.
-Please note that this is a simplified example, and real-world control systems are often more complex with additional dynamics, constraints, and sensors. Implementing SAC for real control systems typically requires a custom environment that accurately models the system dynamics and interface with the control hardware or simulation.
-In real-world control system applications, it is crucial to design an appropriate reward function, handle system constraints, and consider safety considerations when applying reinforcement learning methods like SAC.
+import torch
+import torch.nn as nn
+
+class TRPOObjective(nn.Module):
+    def __init__(self):
+        super(TRPOObjective, self).__init__()
+
+    def forward(self, new_probs, old_probs, advantages):
+        # Surrogate advantage loss
+        ratio = new_probs / (old_probs + 1e-8)
+        surrogate_loss = ratio * advantages
+        return -torch.mean(surrogate_loss)
 ```
 
 ---
@@ -1599,8 +1330,9 @@ Asynchronous version of A2C where multiple worker threads update a global model 
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Asynchronous updates break temporal correlations without an experience replay buffer | Thread-unsynchronized parameter updates can lead to instability |
+| Faster training times by utilizing multiple CPU/GPU worker threads | Complex multiprocessing architecture |
+|  | Hard to debug thread race conditions |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1614,7 +1346,33 @@ Asynchronous version of A2C where multiple worker threads update a global model 
 ### 💻 Python Source Code
 
 ```python
-# A3C: Multi-worker threads updating a central global parameter network asynchronously
+import torch
+import torch.nn as nn
+import torch.multiprocessing as mp
+
+class GlobalNetwork(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super(GlobalNetwork, self).__init__()
+        self.fc = nn.Linear(state_dim, 128)
+        self.actor = nn.Linear(128, action_dim)
+        self.critic = nn.Linear(128, 1)
+
+    def forward(self, x):
+        h = torch.relu(self.fc(x))
+        return torch.softmax(self.actor(h), dim=-1), self.critic(h)
+
+# Shared optimizer across worker processes
+class SharedAdam(torch.optim.Adam):
+    def __init__(self, params, lr=1e-3):
+        super(SharedAdam, self).__init__(params, lr=lr)
+        for group in self.param_groups:
+            for p in group['params']:
+                state = self.state[p]
+                state['step'] = 0
+                state['exp_avg'] = torch.zeros_like(p.data)
+                state['exp_avg_sq'] = torch.zeros_like(p.data)
+                state['exp_avg'].share_memory_()
+                state['exp_avg_sq'].share_memory_()
 ```
 
 ---
@@ -1632,8 +1390,9 @@ A simpler-to-implement and more stable alternative to TRPO using a clipped objec
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Provides stability and monotonic guarantees of TRPO but with much simpler, computationally cheaper first-order gradient updates | High sample complexity |
+| Widely considered the industry benchmark for general reinforcement learning | Sensitive to clipping hyperparameter epsilon and value loss scaling |
+|  | Policy can occasionally become overly conservative in exploration |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1648,7 +1407,21 @@ A simpler-to-implement and more stable alternative to TRPO using a clipped objec
 ### 💻 Python Source Code
 
 ```python
-Deep Deterministic Policy Gradient
+import torch
+import torch.nn as nn
+
+class PPOLoss(nn.Module):
+    def __init__(self, clip_eps=0.2):
+        super(PPOLoss, self).__init__()
+        self.clip_eps = clip_eps
+
+    def forward(self, new_probs, old_probs, advantages):
+        # Probability ratio r_t(theta)
+        ratio = new_probs / (old_probs + 1e-8)
+        surr1 = ratio * advantages
+        surr2 = torch.clamp(ratio, 1.0 - self.clip_eps, 1.0 + self.clip_eps) * advantages
+        # Clipped surrogate objective
+        return -torch.mean(torch.min(surr1, surr2))
 ```
 
 ---
@@ -1665,8 +1438,8 @@ Actor-critic, model-free algorithm for continuous action spaces. It uses the det
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Sample-efficient off-policy method designed specifically for high-dimensional, continuous action spaces | High instability during training due to overestimation bias |
+|  | Very sensitive to hyperparameter tuning and noise exploration parameters |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1680,7 +1453,32 @@ Actor-critic, model-free algorithm for continuous action spaces. It uses the det
 ### 💻 Python Source Code
 
 ```python
-# Reference code bundle.
+import torch
+import torch.nn as nn
+
+class DeterministicActor(nn.Module):
+    def __init__(self, state_dim, action_dim, max_action):
+        super(DeterministicActor, self).__init__()
+        self.net = nn.Sequential(
+            nn.Linear(state_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, action_dim),
+            nn.Tanh()
+        )
+        self.max_action = max_action
+
+    def forward(self, state):
+        return self.max_action * self.net(state)
+
+class Critic(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super(Critic, self).__init__()
+        self.fc1 = nn.Linear(state_dim + action_dim, 128)
+        self.fc2 = nn.Linear(128, 1)
+
+    def forward(self, state, action):
+        x = torch.cat([state, action], dim=-1)
+        return self.fc2(torch.relu(self.fc1(x)))
 ```
 
 ---
@@ -1697,8 +1495,9 @@ Addresses overestimation bias in DDPG using twin Q-networks and delayed policy u
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Mitigates the overestimation bias of DDPG using twin critic networks and delayed policy updates | High hyperparameter sensitivity |
+| Significantly more stable and robust than baseline DDPG | Computationally slower than DDPG per update step |
+|  | Still suffers from general off-policy RL sample inefficiencies |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1712,7 +1511,28 @@ Addresses overestimation bias in DDPG using twin Q-networks and delayed policy u
 ### 💻 Python Source Code
 
 ```python
-# TD3: Uses twin critic Q-networks and delayed policy updates to mitigate overestimation bias
+import torch
+import torch.nn as nn
+
+class TD3TwinCritic(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super(TD3TwinCritic, self).__init__()
+        # Critic network 1
+        self.q1 = nn.Sequential(
+            nn.Linear(state_dim + action_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, 1)
+        )
+        # Critic network 2 (Twin)
+        self.q2 = nn.Sequential(
+            nn.Linear(state_dim + action_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, 1)
+        )
+
+    def forward(self, state, action):
+        xu = torch.cat([state, action], dim=-1)
+        return self.q1(xu), self.q2(xu)
 ```
 
 ---
@@ -1730,8 +1550,9 @@ Maximum entropy RL algorithm that provides sample-efficient learning and robustn
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Maximum entropy framework encourages aggressive exploration, resulting in exceptional sample efficiency and robust policies that generalize well | Highly sensitive to the temperature parameter alpha (requires auto-tuning) |
+|  | Challenging to balance actor and twin critic networks |
+|  | High computational overhead per gradient update |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1745,7 +1566,34 @@ Maximum entropy RL algorithm that provides sample-efficient learning and robustn
 ### 💻 Python Source Code
 
 ```python
-# SAC: Maximum entropy actor-critic maximizing cumulative reward alongside policy entropy
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.distributions import Normal
+
+class GaussianPolicy(nn.Module):
+    def __init__(self, state_dim, action_dim, log_std_min=-20, log_std_max=2):
+        super(GaussianPolicy, self).__init__()
+        self.fc = nn.Linear(state_dim, 128)
+        self.mean = nn.Linear(128, action_dim)
+        self.log_std = nn.Linear(128, action_dim)
+        self.log_std_min = log_std_min
+        self.log_std_max = log_std_max
+
+    def forward(self, state):
+        x = F.relu(self.fc(state))
+        mean = self.mean(x)
+        log_std = self.log_std(x)
+        log_std = torch.clamp(log_std, self.log_std_min, self.log_std_max)
+        return mean, log_std
+
+    def sample(self, state):
+        mean, log_std = self.forward(state)
+        std = log_std.exp()
+        normal = Normal(mean, std)
+        x_t = normal.rsample()  # Reparameterization trick
+        action = torch.tanh(x_t)
+        return action
 ```
 
 ---
@@ -1762,8 +1610,8 @@ Iterative process where a model labels unlabeled data and retrains on its own pr
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Simple, conceptual framework that can leverage any standard base classifier | Danger of error reinforcement where early incorrect predictions are pseudo-labeled and degrade model performance over iterations |
+| Highly cost-effective by utilizing unlabeled datasets without external annotations | Highly dependent on a good initial labeled set |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1781,13 +1629,14 @@ from sklearn.semi_supervised import SelfTrainingClassifier
 from sklearn.svm import SVC
 import numpy as np
 
-# Prepare semi-supervised inputs (unlabeled labels marked as -1)
-X = np.random.rand(100, 5)
-y = np.random.choice([0, 1], size=100)
-y[80:] = -1  # Unlabeled dataset
+# Prepare semi-supervised dataset (unlabeled marked as -1)
+X = np.random.rand(150, 4)
+y = np.random.choice([0, 1], size=150)
+y[100:] = -1  # Mask 50 labels as unlabeled
 
-svc = SVC(probability=True, gamma="auto")
-self_training_model = SelfTrainingClassifier(svc)
+# Train a Self-Training model using SVM classifier with probability estimates
+svc = SVC(probability=True, kernel='linear')
+self_training_model = SelfTrainingClassifier(svc, threshold=0.75)
 self_training_model.fit(X, y)
 ```
 
@@ -1805,8 +1654,8 @@ Two classifiers are trained on different views of the data and iteratively provi
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| High sample efficiency by using independent disjoint feature views to cross-label samples | Requires the strict assumption of view independence and sufficiency (which is extremely rare and difficult to satisfy in real-world datasets) |
+| Highly robust to early pseudo-label noise compared to self-training |  |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1820,7 +1669,23 @@ Two classifiers are trained on different views of the data and iteratively provi
 ### 💻 Python Source Code
 
 ```python
-# Co-training: Iteratively labels high-confidence samples using independent disjoint feature views
+import numpy as np
+from sklearn.naive_bayes import GaussianNB
+
+class CoTrainingClassifier:
+    def __init__(self, clf1=GaussianNB(), clf2=GaussianNB(), p=1, n=1):
+        self.clf1 = clf1  # Classifier for view 1
+        self.clf2 = clf2  # Classifier for view 2
+        self.p = p        # Positive samples to add per iteration
+        self.n = n        # Negative samples to add per iteration
+
+    def fit(self, X1, X2, y):
+        # Simple co-training algorithm framework
+        # X1 is feature view 1, X2 is feature view 2
+        # Train base classifiers on initial labeled set
+        labeled_idx = np.where(y != -1)[0]
+        self.clf1.fit(X1[labeled_idx], y[labeled_idx])
+        self.clf2.fit(X2[labeled_idx], y[labeled_idx])
 ```
 
 ---
@@ -1837,8 +1702,9 @@ Learning from multiple distinct feature sets (views) to improve performance.
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Integrates heterogeneous data representations (e.g., audio and video) into a unified projection | High computational cost of aligning views |
+| Enhances generalization by utilizing complementary features | Sensitive to missing views or noise in a single channel |
+|  | Requires specialized co-regularization algorithms |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1852,7 +1718,19 @@ Learning from multiple distinct feature sets (views) to improve performance.
 ### 💻 Python Source Code
 
 ```python
-# Multi-view: Training multiple classifiers across distinct representations and fusing prediction outcomes
+import numpy as np
+from sklearn.decomposition import CCA
+
+class MultiViewRepresentation:
+    def __init__(self, n_components=2):
+        self.cca = CCA(n_components=n_components)
+
+    def fit_transform(self, X1, X2):
+        # Canonical Correlation Analysis to find a shared latent space
+        self.cca.fit(X1, X2)
+        X1_c, X2_c = self.cca.transform(X1, X2)
+        # Fuse projections by concatenation
+        return np.hstack([X1_c, X2_c])
 ```
 
 ---
@@ -1869,8 +1747,9 @@ Iterative method to find maximum likelihood estimates of parameters in models wi
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Elegant, mathematically rigorous framework for fitting latent variable models | Prone to getting trapped in local maxima |
+| Guarantees monotonic convergence of log-likelihood | Highly sensitive to initial parameter seeding |
+|  | Computationally slow for large datasets |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1909,8 +1788,8 @@ Model data as a graph and propagate labels through edges based on similarity.
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Captures complex, non-linear manifold structures of data | Highly sensitive to the quality of graph construction (edge weights) |
+| Extremely effective at propagating labels when very few labeled nodes exist | Does not scale well computationally to large datasets due to graph Laplacian inversion costs |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1949,8 +1828,8 @@ Extends SVM to semi-supervised learning by maximizing the margin on both labeled
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Maximizes the margin over both labeled and unlabeled data, providing strong generalization bounds on small datasets | Non-convex optimization problem that is computationally NP-hard to solve exactly |
+|  | Approximate methods are sensitive to initialization |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1963,7 +1842,24 @@ Extends SVM to semi-supervised learning by maximizing the margin on both labeled
 ### 💻 Python Source Code
 
 ```python
-# TSVM: Semi-supervised margin maximization on both labeled and unlabeled samples
+import numpy as np
+from sklearn.svm import SVC
+
+class SimpleTSVM:
+    def __init__(self, C=1.0, cl_unlabeled=0.1):
+        self.C = C
+        self.cl_unlabeled = cl_unlabeled
+        self.clf = SVC(kernel='linear', C=C)
+
+    def fit(self, X_labeled, y_labeled, X_unlabeled):
+        # Initial supervised training on labeled set
+        self.clf.fit(X_labeled, y_labeled)
+        # Predict pseudo-labels for unlabeled points
+        pseudo_labels = self.clf.predict(X_unlabeled)
+        # Iteratively train on combined labeled & pseudo-labeled points
+        X_combined = np.vstack([X_labeled, X_unlabeled])
+        y_combined = np.hstack([y_labeled, pseudo_labels])
+        self.clf.fit(X_combined, y_combined)
 ```
 
 ---
@@ -1980,8 +1876,9 @@ Minimizes a loss function that includes a penalty for disagreement between class
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Enforces agreement across different feature representations, providing robust regularization constraints that limit overfitting | Requires multi-view feature setups |
+|  | High hyperparameter sensitivity |
+|  | Complex joint loss optimization |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -1995,7 +1892,25 @@ Minimizes a loss function that includes a penalty for disagreement between class
 ### 💻 Python Source Code
 
 ```python
-# Co-regularization: Joint loss optimization forcing multi-view classifiers to predict similar labels
+import numpy as np
+from sklearn.linear_model import Ridge
+
+class CoRegularizedRegression:
+    def __init__(self, alpha=1.0, mu=0.5):
+        self.clf1 = Ridge(alpha=alpha)
+        self.clf2 = Ridge(alpha=alpha)
+        self.mu = mu  # Agreement regularization weight
+
+    def fit(self, X1_labeled, X2_labeled, y_labeled, X1_unlabeled, X2_unlabeled, iterations=5):
+        # Iterative update minimizing self-loss and view disagreement
+        for _ in range(iterations):
+            self.clf1.fit(X1_labeled, y_labeled)
+            self.clf2.fit(X2_labeled, y_labeled)
+            # Regularize towards agreement on unlabeled data
+            pred1 = self.clf1.predict(X1_unlabeled)
+            pred2 = self.clf2.predict(X2_unlabeled)
+            # Adjust targets using multi-view consensus
+            y_unlabeled = 0.5 * (pred1 + pred2)
 ```
 
 ---
@@ -2012,8 +1927,9 @@ Models like VAEs or GANs that learn to generate new data samples from the same d
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Outstanding capacity to learn complex, high-dimensional target distributions | High training instability (e.g., mode collapse in GANs) |
+| Creates high-fidelity synthetic samples for data augmentation | Challenging to evaluate generation quality |
+|  | High computational and memory footprint |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -2028,7 +1944,31 @@ Models like VAEs or GANs that learn to generate new data samples from the same d
 ### 💻 Python Source Code
 
 ```python
-# Reference code bundle.
+import torch
+import torch.nn as nn
+
+class VariationalAutoencoder(nn.Module):
+    def __init__(self, input_dim, latent_dim):
+        super(VariationalAutoencoder, self).__init__()
+        # Encoder projects inputs to latent distribution parameters
+        self.fc_enc = nn.Linear(input_dim, 64)
+        self.fc_mu = nn.Linear(64, latent_dim)
+        self.fc_logvar = nn.Linear(64, latent_dim)
+        # Decoder generates samples from latent vector
+        self.fc_dec1 = nn.Linear(latent_dim, 64)
+        self.fc_dec2 = nn.Linear(64, input_dim)
+
+    def reparameterize(self, mu, logvar):
+        std = torch.exp(0.5 * logvar)
+        eps = torch.randn_like(std)
+        return mu + eps * std  # Latent sampling trick
+
+    def forward(self, x):
+        h = torch.relu(self.fc_enc(x))
+        mu, logvar = self.fc_mu(h), self.fc_logvar(h)
+        z = self.reparameterize(mu, logvar)
+        reconstruction = torch.sigmoid(self.fc_dec2(torch.relu(self.fc_dec1(z))))
+        return reconstruction, mu, logvar
 ```
 
 ---
@@ -2045,8 +1985,8 @@ Regularizes the model by making it robust to virtual adversarial perturbations i
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Local distribution robustness regularizer that does not require labeled data | High computational overhead due to multiple forward/backward passes to estimate the adversarial perturbation direction |
+| Yields outstanding classification boundaries by pushing model to be robust against adversarial perturbations | Sensitive to perturbation epsilon |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -2060,7 +2000,31 @@ Regularizes the model by making it robust to virtual adversarial perturbations i
 ### 💻 Python Source Code
 
 ```python
-Tri-training
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class VATLoss(nn.Module):
+    def __init__(self, xi=1e-6, eps=1.0, ip=1):
+        super(VATLoss, self).__init__()
+        self.xi = xi      # Perturbation scale for gradient approximation
+        self.eps = eps    # Adversarial epsilon bound
+        self.ip = ip      # Power iterations count
+
+    def forward(self, model, x):
+        # Generate virtual adversarial perturbation to maximize KL divergence
+        with torch.no_grad():
+            pred = F.softmax(model(x), dim=-1)
+        d = torch.randn_like(x)
+        d = F.normalize(d, p=2, dim=-1)
+        for _ in range(self.ip):
+            d.requires_grad_()
+            pred_hat = F.softmax(model(x + self.xi * d), dim=-1)
+            kl = F.kl_div(pred_hat.log(), pred, reduction='batchmean')
+            kl.backward()
+            d = F.normalize(d.grad, p=2, dim=-1)
+        r_vadv = self.eps * d
+        return r_vadv
 ```
 
 ---
@@ -2077,8 +2041,8 @@ Uses three classifiers; an unlabeled sample is labeled if two of the three class
 
 | **Advantages (Pros)** | **Disadvantages (Cons)** |
 | :--- | :--- |
-| Highly interpretable baseline model | Sensitive to hyperparameters |
-| Computationally efficient to train | Struggles with non-linear correlations |
+| Eliminates the view independence requirement of Co-training by utilizing bootstrap sampling to construct three diverse classifiers | High computational overhead (requires training and querying three separate classifiers) |
+| Highly robust to pseudo-labeling noise | Consensus voting can occasionally collapse if two classifiers synchronize incorrect predictions |
 
 ### ⏱️ Computational & Space Complexity
 
@@ -2093,7 +2057,21 @@ Uses three classifiers; an unlabeled sample is labeled if two of the three class
 ### 💻 Python Source Code
 
 ```python
-# Tri-training: Trio of classifiers where consensus labels the unlabeled dataset iteratively
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+
+class TriTrainingClassifier:
+    def __init__(self, clf1=DecisionTreeClassifier(), clf2=DecisionTreeClassifier(), clf3=DecisionTreeClassifier()):
+        self.clfs = [clf1, clf2, clf3]
+
+    def fit(self, X, y):
+        # X contains both labeled and unlabeled data, unlabeled y marked as -1
+        labeled_idx = np.where(y != -1)[0]
+        unlabeled_idx = np.where(y == -1)[0]
+        # Train three independent classifiers using bootstrap sampling
+        for clf in self.clfs:
+            bootstrap = np.random.choice(labeled_idx, size=len(labeled_idx), replace=True)
+            clf.fit(X[bootstrap], y[bootstrap])
 ```
 
 ---

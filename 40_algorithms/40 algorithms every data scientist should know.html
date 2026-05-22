@@ -1,55 +1,4419 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-<title>Markmap</title>
-<style>
-* {
-  margin: 0;
-  padding: 0;
-}
-html {
-  font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-}
-#mindmap {
-  display: block;
-  width: 100vw;
-  height: 100vh;
-}
-.markmap-dark {
-  background: #27272a;
-  color: white;
-}
-</style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.18.12/dist/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>40 Algorithms Every Data Scientist Should Know - Master Edition Portal</title>
+  <!-- MathJax for rendering LaTeX -->
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #131b2e;
+      --bg-card: rgba(22, 33, 54, 0.75);
+      --accent-primary: #3b82f6;
+      --accent-secondary: #a855f7;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-shadow: rgba(0, 0, 0, 0.45);
+      --font-sans: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 340px;
+      background: rgba(11, 15, 25, 0.95);
+      backdrop-filter: blur(25px);
+      border-right: 1px solid var(--glass-border);
+      padding: 2.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 1.5rem;
+    }
+
+    .sidebar-header h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.3;
+    }
+
+    .sidebar-header p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-item button {
+      width: 100%;
+      background: none;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-item button:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.03);
+      border-color: var(--glass-border);
+    }
+
+    .nav-item.active button {
+      color: var(--text-main);
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(168, 85, 247, 0.15));
+      border-color: rgba(59, 130, 246, 0.35);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.12);
+      font-weight: 600;
+    }
+
+    .main-content {
+      margin-left: 340px;
+      flex: 1;
+      padding: 4rem 5rem;
+      max-width: 1200px;
+    }
+
+    /* Algorithm Sections */
+    .algo-section {
+      display: none;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .algo-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .algo-header {
+      margin-bottom: 2.5rem;
+    }
+
+    .algo-title {
+      font-size: 2.85rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #ffffff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .algo-category {
+      display: inline-block;
+      font-size: 0.85rem;
+      color: var(--accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      border-left: 3px solid var(--accent-primary);
+      padding-left: 0.75rem;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2.25rem;
+      box-shadow: 0 8px 32px var(--glass-shadow);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 0.75rem;
+    }
+
+    .card-title.tradeoffs {
+      color: var(--accent-secondary);
+    }
+
+    .card-content {
+      font-size: 0.98rem;
+      line-height: 1.75;
+      color: var(--text-main);
+    }
+
+    .card-content p {
+      margin-bottom: 1rem;
+    }
+
+    .card-content ul {
+      list-style: none;
+      padding-left: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .card-content li {
+      position: relative;
+      padding-left: 1.5rem;
+    }
+
+    .card-content li::before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      color: var(--accent-primary);
+    }
+
+    .card-content.tradeoffs li::before {
+      color: var(--accent-secondary);
+    }
+
+    /* Math formulation styling */
+    .math-block {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin: 1.25rem 0;
+      overflow-x: auto;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      text-align: center;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Complexity tag */
+    .complexity-badge {
+      display: inline-block;
+      background: rgba(168, 85, 247, 0.15);
+      color: #e9d5ff;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      padding: 0.4rem 1.1rem;
+      border-radius: 9999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      font-family: monospace;
+      box-shadow: 0 2px 8px rgba(168, 85, 247, 0.1);
+    }
+
+    /* Image Placeholders */
+    .image-placeholder {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(168, 85, 247, 0.05));
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 1.5rem 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .image-placeholder-icon {
+      font-size: 2.8rem;
+      margin-bottom: 0.75rem;
+      filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.35));
+    }
+
+    /* Code Blocks */
+    pre.code-block {
+      background: #060a12;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 14px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+      font-size: 0.88rem;
+      line-height: 1.65;
+      margin-top: 1.25rem;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.85);
+    }
+
+    code {
+      color: #e2e8f0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1000px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: 300px;
+        position: relative;
+        padding: 1.5rem;
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 2.5rem 1.5rem;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<svg id="mindmap"></svg>
-<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script><script src="https://cdn.jsdelivr.net/npm/markmap-view@0.18.12/dist/browser/index.js"></script><script src="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.18.12/dist/index.js"></script><script>(r => {
-              setTimeout(r);
-            })(function renderToolbar() {
-  const {
-    markmap,
-    mm
-  } = window;
-  const {
-    el
-  } = markmap.Toolbar.create(mm);
-  el.setAttribute('style', 'position:absolute;bottom:20px;right:20px');
-  document.body.append(el);
-})</script><script>((getMarkmap, getOptions, root2, jsonOptions) => {
-              const markmap = getMarkmap();
-              window.mm = markmap.Markmap.create(
-                "svg#mindmap",
-                (getOptions || markmap.deriveOptions)(jsonOptions),
-                root2
-              );
-              if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                document.documentElement.classList.add("markmap-dark");
-              }
-            })(() => window.markmap,null,{"content":"40 Algorithms Every Data Scientist Should Know","children":[{"content":"<strong>Supervised Learning</strong>","children":[{"content":"Linear regression","children":[],"payload":{"tag":"li","lines":"2,3"}},{"content":"Logistic regression","children":[],"payload":{"tag":"li","lines":"3,4"}},{"content":"Decision trees","children":[],"payload":{"tag":"li","lines":"4,5"}},{"content":"Random forests","children":[],"payload":{"tag":"li","lines":"5,6"}},{"content":"Support Vector Machine","children":[],"payload":{"tag":"li","lines":"6,7"}},{"content":"Naive Bayes","children":[],"payload":{"tag":"li","lines":"7,8"}},{"content":"k-Nearest Neighbors","children":[],"payload":{"tag":"li","lines":"8,9"}},{"content":"Neural networks","children":[],"payload":{"tag":"li","lines":"9,10"}},{"content":"Gradient Boosting Machines","children":[],"payload":{"tag":"li","lines":"10,11"}},{"content":"XGBoost","children":[],"payload":{"tag":"li","lines":"11,12"}}],"payload":{"tag":"li","lines":"1,12"}},{"content":"<strong>Unsupervised Learning</strong>","children":[{"content":"K-means clustering","children":[],"payload":{"tag":"li","lines":"13,14"}},{"content":"Hierarchical clustering","children":[],"payload":{"tag":"li","lines":"14,15"}},{"content":"Principal Component Analysis","children":[],"payload":{"tag":"li","lines":"15,16"}},{"content":"t-Distributed Stochastic Neighbor Embedding","children":[],"payload":{"tag":"li","lines":"16,17"}},{"content":"Association Rule Mining","children":[],"payload":{"tag":"li","lines":"17,18"}},{"content":"DBSCAN","children":[],"payload":{"tag":"li","lines":"18,19"}},{"content":"Gaussian Mixture Models","children":[],"payload":{"tag":"li","lines":"19,20"}},{"content":"Autoencoders","children":[],"payload":{"tag":"li","lines":"20,21"}},{"content":"Anomaly detection","children":[],"payload":{"tag":"li","lines":"21,22"}},{"content":"Latent Dirichlet Allocation","children":[],"payload":{"tag":"li","lines":"22,23"}}],"payload":{"tag":"li","lines":"12,23"}},{"content":"<strong>Reinforcement Learning</strong>","children":[{"content":"Q-Learning","children":[],"payload":{"tag":"li","lines":"24,25"}},{"content":"Deep Q-Networks","children":[],"payload":{"tag":"li","lines":"25,26"}},{"content":"Policy gradient methods","children":[],"payload":{"tag":"li","lines":"26,27"}},{"content":"Advantage Actor-Critic","children":[],"payload":{"tag":"li","lines":"27,28"}},{"content":"Trust Region Policy Optimization","children":[],"payload":{"tag":"li","lines":"28,29"}},{"content":"Asynchronous Advantage Actor-Critic","children":[],"payload":{"tag":"li","lines":"29,30"}},{"content":"Proximal Policy Optimization","children":[],"payload":{"tag":"li","lines":"30,31"}},{"content":"Deep Deterministic Policy Gradient","children":[],"payload":{"tag":"li","lines":"31,32"}},{"content":"Twin Delayed Deep Deterministic Policy Gradient","children":[],"payload":{"tag":"li","lines":"32,33"}},{"content":"Soft Actor-Critic","children":[],"payload":{"tag":"li","lines":"33,34"}}],"payload":{"tag":"li","lines":"23,34"}},{"content":"<strong>Semi-supervised Learning</strong>","children":[{"content":"Self-training","children":[],"payload":{"tag":"li","lines":"35,36"}},{"content":"Co-training","children":[],"payload":{"tag":"li","lines":"36,37"}},{"content":"Multi-view learning","children":[],"payload":{"tag":"li","lines":"37,38"}},{"content":"Expectation-Maximization","children":[],"payload":{"tag":"li","lines":"38,39"}},{"content":"Graph-based methods","children":[],"payload":{"tag":"li","lines":"39,40"}},{"content":"Transductive Support Vector Machines","children":[],"payload":{"tag":"li","lines":"40,41"}},{"content":"Co-regularization","children":[],"payload":{"tag":"li","lines":"41,42"}},{"content":"Deep generative models","children":[],"payload":{"tag":"li","lines":"42,43"}},{"content":"Virtual Adversarial Training","children":[],"payload":{"tag":"li","lines":"43,44"}},{"content":"Tri-training","children":[],"payload":{"tag":"li","lines":"44,45"}}],"payload":{"tag":"li","lines":"34,45"}}],"payload":{"tag":"h1","lines":"0,1"}},{})</script>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1>40 AI/ML Algorithms</h1>
+      <p>Master Edition Study Portal</p>
+    </div>
+    <ul class="nav-menu">
+
+      <li class="nav-item active" id="nav-linear-regression">
+        <button onclick="showAlgo('linear-regression')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 1. Linear regression
+        </button>
+      </li>
+      <li class="nav-item " id="nav-logistic-regression">
+        <button onclick="showAlgo('logistic-regression')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 2. Logistic regression
+        </button>
+      </li>
+      <li class="nav-item " id="nav-decision-trees">
+        <button onclick="showAlgo('decision-trees')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 3. Decision trees
+        </button>
+      </li>
+      <li class="nav-item " id="nav-random-forests">
+        <button onclick="showAlgo('random-forests')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 4. Random forests
+        </button>
+      </li>
+      <li class="nav-item " id="nav-support-vector-machine">
+        <button onclick="showAlgo('support-vector-machine')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 5. Support Vector Machine
+        </button>
+      </li>
+      <li class="nav-item " id="nav-naive-bayes">
+        <button onclick="showAlgo('naive-bayes')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 6. Naive Bayes
+        </button>
+      </li>
+      <li class="nav-item " id="nav-k-nearest-neighbors">
+        <button onclick="showAlgo('k-nearest-neighbors')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 7. k-Nearest Neighbors
+        </button>
+      </li>
+      <li class="nav-item " id="nav-neural-networks">
+        <button onclick="showAlgo('neural-networks')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 8. Neural networks
+        </button>
+      </li>
+      <li class="nav-item " id="nav-gradient-boosting-machines">
+        <button onclick="showAlgo('gradient-boosting-machines')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 9. Gradient Boosting Machines
+        </button>
+      </li>
+      <li class="nav-item " id="nav-xgboost">
+        <button onclick="showAlgo('xgboost')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 10. XGBoost
+        </button>
+      </li>
+      <li class="nav-item " id="nav-k-means-clustering">
+        <button onclick="showAlgo('k-means-clustering')">
+          <span style="color: #10b981; margin-right: 0.5rem;">✦</span> 11. K-means clustering
+        </button>
+      </li>
+      <li class="nav-item " id="nav-hierarchical-clustering">
+        <button onclick="showAlgo('hierarchical-clustering')">
+          <span style="color: #10b981; margin-right: 0.5rem;">✦</span> 12. Hierarchical clustering
+        </button>
+      </li>
+      <li class="nav-item " id="nav-principal-component-analysis">
+        <button onclick="showAlgo('principal-component-analysis')">
+          <span style="color: #10b981; margin-right: 0.5rem;">✦</span> 13. Principal Component Analysis
+        </button>
+      </li>
+      <li class="nav-item " id="nav-t-distributed-stochastic-neighbor-embedding">
+        <button onclick="showAlgo('t-distributed-stochastic-neighbor-embedding')">
+          <span style="color: #10b981; margin-right: 0.5rem;">✦</span> 14. t-Distributed Stochastic Neighbor Embedding
+        </button>
+      </li>
+      <li class="nav-item " id="nav-association-rule-mining">
+        <button onclick="showAlgo('association-rule-mining')">
+          <span style="color: #10b981; margin-right: 0.5rem;">✦</span> 15. Association Rule Mining
+        </button>
+      </li>
+      <li class="nav-item " id="nav-dbscan">
+        <button onclick="showAlgo('dbscan')">
+          <span style="color: #10b981; margin-right: 0.5rem;">✦</span> 16. DBSCAN
+        </button>
+      </li>
+      <li class="nav-item " id="nav-gaussian-mixture-models">
+        <button onclick="showAlgo('gaussian-mixture-models')">
+          <span style="color: #10b981; margin-right: 0.5rem;">✦</span> 17. Gaussian Mixture Models
+        </button>
+      </li>
+      <li class="nav-item " id="nav-autoencoders">
+        <button onclick="showAlgo('autoencoders')">
+          <span style="color: #10b981; margin-right: 0.5rem;">✦</span> 18. Autoencoders
+        </button>
+      </li>
+      <li class="nav-item " id="nav-anomaly-detection">
+        <button onclick="showAlgo('anomaly-detection')">
+          <span style="color: #10b981; margin-right: 0.5rem;">✦</span> 19. Anomaly detection
+        </button>
+      </li>
+      <li class="nav-item " id="nav-latent-dirichlet-allocation">
+        <button onclick="showAlgo('latent-dirichlet-allocation')">
+          <span style="color: #10b981; margin-right: 0.5rem;">✦</span> 20. Latent Dirichlet Allocation
+        </button>
+      </li>
+      <li class="nav-item " id="nav-q-learning">
+        <button onclick="showAlgo('q-learning')">
+          <span style="color: #f59e0b; margin-right: 0.5rem;">✦</span> 21. Q-Learning
+        </button>
+      </li>
+      <li class="nav-item " id="nav-deep-q-networks">
+        <button onclick="showAlgo('deep-q-networks')">
+          <span style="color: #f59e0b; margin-right: 0.5rem;">✦</span> 22. Deep Q-Networks
+        </button>
+      </li>
+      <li class="nav-item " id="nav-policy-gradient-methods">
+        <button onclick="showAlgo('policy-gradient-methods')">
+          <span style="color: #f59e0b; margin-right: 0.5rem;">✦</span> 23. Policy gradient methods
+        </button>
+      </li>
+      <li class="nav-item " id="nav-advantage-actor-critic">
+        <button onclick="showAlgo('advantage-actor-critic')">
+          <span style="color: #f59e0b; margin-right: 0.5rem;">✦</span> 24. Advantage Actor-Critic
+        </button>
+      </li>
+      <li class="nav-item " id="nav-trust-region-policy-optimization">
+        <button onclick="showAlgo('trust-region-policy-optimization')">
+          <span style="color: #f59e0b; margin-right: 0.5rem;">✦</span> 25. Trust Region Policy Optimization
+        </button>
+      </li>
+      <li class="nav-item " id="nav-asynchronous-advantage-actor-critic">
+        <button onclick="showAlgo('asynchronous-advantage-actor-critic')">
+          <span style="color: #f59e0b; margin-right: 0.5rem;">✦</span> 26. Asynchronous Advantage Actor-Critic
+        </button>
+      </li>
+      <li class="nav-item " id="nav-proximal-policy-optimization">
+        <button onclick="showAlgo('proximal-policy-optimization')">
+          <span style="color: #f59e0b; margin-right: 0.5rem;">✦</span> 27. Proximal Policy Optimization
+        </button>
+      </li>
+      <li class="nav-item " id="nav-deep-deterministic-policy-gradient">
+        <button onclick="showAlgo('deep-deterministic-policy-gradient')">
+          <span style="color: #f59e0b; margin-right: 0.5rem;">✦</span> 28. Deep Deterministic Policy Gradient
+        </button>
+      </li>
+      <li class="nav-item " id="nav-twin-delayed-deep-deterministic-policy-gradient">
+        <button onclick="showAlgo('twin-delayed-deep-deterministic-policy-gradient')">
+          <span style="color: #f59e0b; margin-right: 0.5rem;">✦</span> 29. Twin Delayed Deep Deterministic Policy
+          Gradient
+        </button>
+      </li>
+      <li class="nav-item " id="nav-soft-actor-critic">
+        <button onclick="showAlgo('soft-actor-critic')">
+          <span style="color: #f59e0b; margin-right: 0.5rem;">✦</span> 30. Soft Actor-Critic
+        </button>
+      </li>
+      <li class="nav-item " id="nav-self-training">
+        <button onclick="showAlgo('self-training')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 31. Self-training
+        </button>
+      </li>
+      <li class="nav-item " id="nav-co-training">
+        <button onclick="showAlgo('co-training')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 32. Co-training
+        </button>
+      </li>
+      <li class="nav-item " id="nav-multi-view-learning">
+        <button onclick="showAlgo('multi-view-learning')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 33. Multi-view learning
+        </button>
+      </li>
+      <li class="nav-item " id="nav-expectation-maximization">
+        <button onclick="showAlgo('expectation-maximization')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 34. Expectation-Maximization
+        </button>
+      </li>
+      <li class="nav-item " id="nav-graph-based-methods">
+        <button onclick="showAlgo('graph-based-methods')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 35. Graph-based methods
+        </button>
+      </li>
+      <li class="nav-item " id="nav-transductive-support-vector-machines">
+        <button onclick="showAlgo('transductive-support-vector-machines')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 36. Transductive Support Vector Machines
+        </button>
+      </li>
+      <li class="nav-item " id="nav-co-regularization">
+        <button onclick="showAlgo('co-regularization')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 37. Co-regularization
+        </button>
+      </li>
+      <li class="nav-item " id="nav-deep-generative-models">
+        <button onclick="showAlgo('deep-generative-models')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 38. Deep generative models
+        </button>
+      </li>
+      <li class="nav-item " id="nav-virtual-adversarial-training">
+        <button onclick="showAlgo('virtual-adversarial-training')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 39. Virtual Adversarial Training
+        </button>
+      </li>
+      <li class="nav-item " id="nav-tri-training">
+        <button onclick="showAlgo('tri-training')">
+          <span style="color: #a855f7; margin-right: 0.5rem;">✦</span> 40. Tri-training
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+
+    <section id="linear-regression" class="algo-section active">
+      <div class="algo-header">
+        <div class="algo-category">Supervised Learning</div>
+        <h2 class="algo-title">Linear regression</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \cdot p^2 + p^3)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$y = \beta_0 + \beta_1 x_1 + \dots + \beta_n x_n + \epsilon$$
+              Linear regression models the relationship between a dependent variable and one or more independent
+              variables by fitting a linear equation. It uses the Ordinary Least Squares (OLS) method to minimize the
+              sum of squared residuals.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Linear regression.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> _Simplicity_: Linear regression is relatively simple to understand and
+                implement. It provides a straightforward approach for modeling the linear relationship between input
+                features and the target variable.</li>
+              <li><strong>Pro:</strong> _Interpretability_: Linear regression allows easy interpretation of the modelʼs
+                coefficients. The coefficients represent the impact of each input feature on the target variable,
+                providing insights into the relationships and importance of different features.</li>
+              <li><strong>Pro:</strong> _Efficiency_: Linear regression algorithms are computationally efficient, making
+                them suitable for large datasets with a high number of features. They have low training and prediction
+                times compared to more complex models.</li>
+              <li><strong>Pro:</strong> _Feature importance_: Linear regression provides a measure of feature importance
+                through the magnitude of the coefficients. Larger coefficients indicate a stronger impact of the
+                corresponding feature on the target variable.</li>
+              <li><strong>Pro:</strong> _Baseline model_: Linear regression is a baseline model for more advanced
+                algorithms. It provides a simple benchmark against which the performance of more complex models can be
+                evaluated.</li>
+              <li><strong>Con:</strong> _Linearity assumption_: Linear regression assumes a linear relationship between
+                the input features and the target variable. If the relationship is non-linear, linear regression may
+                result in poor performance and inaccurate predictions.</li>
+              <li><strong>Con:</strong> _Limited complexity_: Linear regression is limited to capturing linear
+                relationships between variables. It may not capture complex interactions or nonlinear patterns in the
+                data. Polynomial regression can partially address this limitation but has its own constraints.</li>
+              <li><strong>Con:</strong> _Sensitivity to outliers_: Linear regression is sensitive to outliers, as they
+                can significantly affect the estimated coefficients and the overall fit of the model. Outliers can
+                distort the line of best fit and impact the accuracy of predictions.</li>
+              <li><strong>Con:</strong> _Multicollinearity_: Linear regression assumes that the input features are not
+                highly correlated with each other (multicollinearity). When multicollinearity exists, it can lead to
+                unstable and unreliable coefficient estimates.</li>
+              <li><strong>Con:</strong> _Limited applicability_: Linear regression is most suitable for problems where
+                the relationship between the features and target variable is approximately linear. It may not perform
+                well in cases where the relationship is highly nonlinear or when dealing with categorical variables that
+                cannot be easily transformed.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Predicting house prices</li>
+              <li>sales forecasting</li>
+              <li>trend analysis in finance.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import numpy as np
+
+# Prepare features (X) and target (y)
+X = np.array([[1], [2], [3], [4], [5]])
+y = np.array([2, 3.8, 5.1, 6.2, 7.2])
+
+# Initialize and train linear model
+model = LinearRegression()
+model.fit(X, y)
+
+# Print coefficients
+print(f"Coefficients: {model.coef_}")
+print(f"Intercept: {model.intercept_}")
+
+# Predict on new unseen inputs
+X_new = np.array([[6]])
+y_pred = model.predict(X_new)
+print(f"Predicted target for X=6: {y_pred[0]:.2f}")</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="logistic-regression" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Supervised Learning</div>
+        <h2 class="algo-title">Logistic regression</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \cdot p)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$P(y=1|x) = \frac{1}{1 + e^{-(\beta_0 + \sum \beta_i x_i)}}$$
+              Used for binary classification. It models the probability that a given input belongs to a certain class
+              using the sigmoid (logistic) function.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Logistic regression.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> _Leverages unlabeled data_: One of the major strengths of self-training is its
+                ability to utilize large amounts of unlabeled data, which are typically more abundant and easier to
+                obtain than labeled examples.</li>
+              <li><strong>Pro:</strong> _Cost-efficient_: By leveraging unlabeled data, self-training can reduce the
+                need for expensive and time-consuming data annotation efforts.</li>
+              <li><strong>Pro:</strong> _Flexibility_: Self-training can be applied with a variety of base classifiers,
+                from traditional methods like decision trees to more complex models like deep neural networks.</li>
+              <li><strong>Pro:</strong> _Improved performance_: In situations where labeled data is scarce,
+                self-training can lead to significant performance boosts over supervised learning approaches that only
+                utilize the initial labeled set.</li>
+              <li><strong>Pro:</strong> _Domain adaptation_: Self-training can help in scenarios where the model needs
+                to be adapted to a slightly different domain where labeled data might be limited.</li>
+              <li><strong>Pro:</strong> _Regularization effect_: Incorporating predictions on unlabeled data can
+                introduce a form of regularization, preventing the model from overfitting to a small set of labeled
+                samples.</li>
+              <li><strong>Con:</strong> _Error reinforcement_: A major drawback of self-training is the risk of error
+                amplification. If the model makes a mistake in the early stages and is confident about it, this error
+                can be reinforced in subsequent iterations as the wrongly labeled instance is added to the training set.
+              </li>
+              <li><strong>Con:</strong> _Dependence on initial model_: The quality of the initial model (trained only on
+                labeled data) is crucial. If the initial model is of poor quality, the pseudo-labelling process might be
+                ineffective or even detrimental.</li>
+              <li><strong>Con:</strong> _Overconfidence_: Some models might be overly confident about their predictions,
+                even if they are incorrect. This can lead to the selection of many mislabeled instances, deteriorating
+                the modelʼs performance.</li>
+              <li><strong>Con:</strong> _Diversity of unlabeled data_: If the unlabeled data is not diverse enough or
+                does not represent the underlying distribution well, the gains from self-training might be limited.</li>
+              <li><strong>Con:</strong> _Complexity_: The iterative nature of self-training can increase the
+                computational cost, especially when using complex models or large datasets.</li>
+              <li><strong>Con:</strong> _Hard to debug and introspect_: If the performance drops or does not improve as
+                expected, it can be challenging to determine whether the issue is with the pseudo-labelling process, the
+                base model, or other factors.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Spam detection</li>
+              <li>credit scoring</li>
+              <li>medical diagnosis (e.g.</li>
+              <li>disease presence).</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.linear_model import LogisticRegression
+import numpy as np
+
+# Prepare training data
+X = np.array([[1.5], [2.5], [0.5], [3.5], [1.0]])
+y = np.array([0, 1, 0, 1, 0])
+
+# Initialize and train logistic regression model
+model = LogisticRegression()
+model.fit(X, y)
+
+# Predict probabilities and classes
+X_new = np.array([[2.0]])
+prob = model.predict_proba(X_new)
+pred = model.predict(X_new)
+print(f"Probability of class 1: {prob[0][1]:.4f}, Predicted class: {pred[0]}")</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="decision-trees" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Supervised Learning</div>
+        <h2 class="algo-title">Decision trees</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \cdot p \cdot \log n)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$Gini = 1 - \sum p_i^2 \quad \text{or} \quad Entropy = -\sum p_i \log_2 p_i$$
+              A non-parametric supervised learning method. It breaks down a dataset into smaller and smaller subsets
+              while at the same time an associated decision tree is incrementally developed.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Decision trees.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> High predictive accuracy: GBM algorithms, such as XGBoost, LightGBM, and
+                CatBoost, are known for their high predictive accuracy. They can capture complex relationships and
+                interactions in the data, making them suitable for a wide range of tasks, including regression,
+                classification, and ranking problems.</li>
+              <li><strong>Pro:</strong> Handling complex data: GBM algorithms can effectively handle high-dimensional
+                data with mixed feature types (continuous, categorical) and missing values. They can handle non-linear
+                relationships, interactions, and outliers in the data, making them robust in various real-world
+                scenarios.</li>
+              <li><strong>Pro:</strong> Feature importance: GBM algorithms provide insights into feature importance. By
+                examining the contribution of each feature in the ensemble of models, analysts can understand which
+                features have the most significant impact on the predictions. This information can be valuable for
+                feature selection, dimensionality reduction, and interpreting the model.</li>
+              <li><strong>Pro:</strong> Flexibility and customization: GBM algorithms offer flexibility and
+                customization options through various hyperparameters. Analysts can tune the hyperparameters to control
+                model complexity, prevent overfitting, and optimize performance. Additionally, ensemble methods allow
+                the combination of multiple GBM models or other types of models for even better performance.</li>
+              <li><strong>Pro:</strong> Handling imbalanced and/or missing data: GBM algorithms can handle imbalanced
+                and/or missing datasets by assigning appropriate class weights or using techniques like Synthetic
+                Minority Over-sampling Technique (SMOTE). This makes them effective in tasks such as fraud detection,
+                anomaly detection, and rare event prediction.</li>
+              <li><strong>Con:</strong> Computational complexity and training time: GBM algorithms can be
+                computationally expensive and require significant computational resources, especially for large datasets
+                or complex models. Training time can be longer compared to simpler algorithms, particularly if the
+                hyperparameter search space is large.</li>
+              <li><strong>Con:</strong> Hyperparameter tuning: GBM algorithms have several hyperparameters that need to
+                be tuned for optimal performance. Finding the right combination of hyperparameters can be challenging
+                and time-consuming. Grid search or randomized search techniques are often employed to explore the
+                hyperparameter space.</li>
+              <li><strong>Con:</strong> Overfitting risk: GBM algorithms are prone to overfitting if the model
+                complexity is too high or if the dataset is small. Regularization techniques, cross-validation, and
+                early stopping can be used to mitigate overfitting. Careful monitoring of the modelʼs performance on
+                validation or hold-out sets is necessary to ensure good generalization.</li>
+              <li><strong>Con:</strong> Interpretability: GBM algorithms are generally considered less interpretable
+                compared to simpler models like linear regression or decision trees. The ensemble nature and complexity
+                of GBM models can make it challenging to interpret the underlying relationships and decision-making
+                process. Feature importance can provide insights but does not provide a complete understanding.</li>
+              <li><strong>Con:</strong> Data requirements: GBM algorithms typically require enough labeled data to
+                achieve good performance. If labeled data is limited, GBM models may struggle to generalize well. Data
+                collection and annotation efforts may be necessary to train robust GBM models, especially in domains
+                with limited data availability.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Customer segmentation</li>
+              <li>risk assessment</li>
+              <li>loan approval.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import make_classification
+import numpy as np
+
+# Generate classification data
+X, y = make_classification(n_samples=100, n_features=4, random_state=42)
+
+# Train decision tree classifier
+clf = DecisionTreeClassifier(max_depth=3, random_state=42)
+clf.fit(X, y)
+
+# Predict on a new sample
+sample = np.array([[0.5, -0.2, 1.1, -0.5]])
+prediction = clf.predict(sample)
+print("Decision Tree Prediction:", prediction)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="random-forests" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Supervised Learning</div>
+        <h2 class="algo-title">Random forests</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(M \cdot n \cdot p \cdot \log n)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$\hat{f} = \frac{1}{B} \sum_{b=1}^B f_b(x)$$
+              An ensemble learning method that operates by constructing a multitude of decision trees at training time
+              and outputting the class that is the mode of the classes (classification) or mean prediction (regression)
+              of the individual trees.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Random forests.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Fraud detection</li>
+              <li>stock market prediction</li>
+              <li>image classification.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+
+# Create synthetic data
+X = np.random.rand(100, 4)
+y = np.random.choice([0, 1], size=100)
+
+# Initialize and train random forest classifier
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)
+model.fit(X, y)
+
+# Predict on new samples
+X_new = np.random.rand(5, 4)
+y_pred = model.predict(X_new)
+print("Random Forest Predictions:", y_pred)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="support-vector-machine" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Supervised Learning</div>
+        <h2 class="algo-title">Support Vector Machine</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n^2 \cdot p) \text{ to } O(n^3 \cdot p)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$\min \frac{1}{2} ||w||^2 \text{ s.t. } y_i(w \cdot x_i + b) \geq 1$$
+              Finds the hyperplane that maximizes the margin between two classes. Kernels allow SVMs to perform
+              non-linear classification by mapping inputs into high-dimensional feature spaces.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Support Vector Machine.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Handwriting recognition</li>
+              <li>protein fold and remote sensing</li>
+              <li>text categorization.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+import numpy as np
+
+# Create synthetic data
+X = np.random.rand(100, 2)
+y = np.random.choice([0, 1], size=100)
+
+# Create a pipeline with feature scaling and SVM classifier with RBF kernel
+model = make_pipeline(StandardScaler(), SVC(kernel='rbf', C=1.0, probability=True))
+model.fit(X, y)
+
+# Predict probabilities
+X_new = np.random.rand(5, 2)
+probs = model.predict_proba(X_new)
+print("SVM Class Probabilities:\n", probs)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="naive-bayes" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Supervised Learning</div>
+        <h2 class="algo-title">Naive Bayes</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \cdot p)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$P(c|x) = \frac{P(x|c)P(c)}{P(x)}$$
+              Based on Bayes' Theorem with the "naive" assumption of conditional independence between every pair of
+              features given the value of the class variable.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Naive Bayes.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> _Simplicity and efficiency_: Naive Bayes algorithms are simple and
+                computationally efficient. They are fast to train and make predictions, making them suitable for large
+                datasets and real-time applications.</li>
+              <li><strong>Pro:</strong> _Scalability_: Naive Bayes algorithms scale well with the number of features and
+                training instances. They require a small amount of memory to store the model parameters, allowing them
+                to handle high-dimensional data efficiently.</li>
+              <li><strong>Pro:</strong> _Strong performance on small datasets_: Naive Bayes algorithms often perform
+                well even with limited training data. They can make reasonable predictions when the training set is
+                small, which is beneficial in scenarios where collecting a large amount of labeled data is challenging.
+              </li>
+              <li><strong>Pro:</strong> _Handles irrelevant features_: Naive Bayes algorithms are robust to irrelevant
+                features. They can effectively filter out irrelevant features and focus on the informative ones, leading
+                to good performance even when irrelevant features are present.</li>
+              <li><strong>Pro:</strong> _Handles categorical and numerical features_: Naive Bayes algorithms can handle
+                both categorical and numerical features. They accommodate different types of data without the need for
+                explicit feature scaling or encoding.</li>
+              <li><strong>Pro:</strong> _Interpretability_: Naive Bayes algorithms provide interpretable results. The
+                classification decisions are based on conditional probabilities, allowing easy interpretation, and
+                understanding of the modelʼs reasoning.</li>
+              <li><strong>Pro:</strong> _Works well with independence assumption_: Naive Bayes algorithms assume feature
+                independence given the class label. While this assumption may not hold, Naive Bayes can still provide
+                good results, especially in cases where the features are conditionally independent.</li>
+              <li><strong>Pro:</strong> _Simplicity_: k-NN algorithms are simple to understand and implement. They have
+                a straightforward intuition, making them accessible to beginners in machine learning.</li>
+              <li><strong>Pro:</strong> _No training phase_: k-NN algorithms do not have an explicit training phase. The
+                model stores the entire training dataset, making it easy to update the model with new data.</li>
+              <li><strong>Pro:</strong> _Flexibility in classification and regression_: k-NN algorithms can be used for
+                classification and regression tasks. For classification, the algorithm assigns the majority class among
+                the k nearest neighbors. For regression, it predicts the average or median value of the k nearest
+                neighbors.</li>
+              <li><strong>Pro:</strong> _Non-parametric and lazy learning_: k-NN algorithms do not assume any underlying
+                distribution or make assumptions about the data. They are non-parametric and make predictions based on
+                the local characteristics of the data. This allows them to handle complex relationships between features
+                and labels.</li>
+              <li><strong>Pro:</strong> _Handles multiclass classification_: k-NN algorithms can handle multiclass
+                classification problems by considering the class with the highest count among the k nearest neighbors.
+              </li>
+              <li><strong>Con:</strong> _Limited expressiveness_: Naive Bayes algorithms have limited expressiveness
+                compared to more complex models. They may not capture subtle patterns and nuances in the data, leading
+                to reduced predictive accuracy.</li>
+              <li><strong>Con:</strong> _Sensitivity to feature correlations_: Naive Bayes algorithms assume
+                independence between features. When features are highly correlated, this assumption may result in biased
+                predictions. Pre-processing techniques like feature engineering or dimensionality reduction can help
+                alleviate this issue.</li>
+              <li><strong>Con:</strong> _Lack of calibration_: Naive Bayes algorithms can have issues with calibration,
+                meaning the predicted probabilities may not align well with the actual probabilities. The predicted
+                probabilities can be overconfident or underconfident, requiring calibration techniques for better
+                estimation.</li>
+              <li><strong>Con:</strong> _Data sparsity_: Naive Bayes algorithms can struggle with rare or unseen
+                feature-value combinations in the training data. Unseen data can lead to zero probabilities or
+                inaccurate probability estimates, affecting the modelʼs performance.</li>
+              <li><strong>Con:</strong> _Sensitivity to input quality_: Naive Bayes algorithms can be sensitive to the
+                quality of the input features. Inaccurate or noisy input features can have a significant impact on the
+                modelʼs performance.</li>
+              <li><strong>Con:</strong> _Computational complexity_: The prediction step of k-NN algorithms can be
+                computationally expensive, especially with large datasets. As the dataset grows, the time complexity
+                increases as the algorithm needs to compute distances for each instance.</li>
+              <li><strong>Con:</strong> _Sensitivity to feature scaling_: k-NN algorithms are sensitive to the scale of
+                input features. Features with larger scales can dominate the distance calculation, leading to biased
+                predictions. Feature scaling techniques such as normalization or standardization should be applied to
+                ensure equal importance of all features.</li>
+              <li><strong>Con:</strong> _Curse of dimensionality_: k-NN algorithms can suffer from the curse of
+                dimensionality. As the number of features increases, the density of the data in the feature space
+                decreases. This can lead to a degradation in performance and increased computational requirements.</li>
+              <li><strong>Con:</strong> _Need for optimal k value_: The choice of the k value in k-NN algorithms is
+                critical. A small value of k may result in overfitting, while a large value may lead to underfitting.
+                Selecting an optimal k value requires experimentation or using techniques like cross-validation.</li>
+              <li><strong>Con:</strong> _Imbalanced data impact_: k-NN algorithms are affected by imbalanced class
+                distributions. If the classes are imbalanced, the majority class can dominate the predictions, leading
+                to biased results. Techniques such as oversampling, under-sampling, or using different distance metrics
+                can help address this issue.</li>
+              <li><strong>Con:</strong> _Lack of model interpretability_: k-NN algorithms lack model interpretability.
+                They do not provide insight into the underlying relationships between features and labels. The
+                prediction is based on local neighbors without explicitly showing the decision boundaries or feature
+                importance.</li>
+              <li><strong>Con:</strong> _Real world applications_</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Real-time prediction</li>
+              <li>multi-class classification</li>
+              <li>text classification/spam filtering.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.naive_bayes import GaussianNB
+import numpy as np
+
+# Create synthetic data
+X = np.random.randn(100, 2)
+y = np.random.choice([0, 1], size=100)
+
+# Fit Gaussian Naive Bayes classifier
+clf = GaussianNB()
+clf.fit(X, y)
+
+# Predict new data
+X_new = np.array([[0.1, -0.5]])
+pred = clf.predict(X_new)
+print("Naive Bayes Class Prediction:", pred)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="k-nearest-neighbors" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Supervised Learning</div>
+        <h2 class="algo-title">k-Nearest Neighbors</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \cdot p)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$d(x, y) = \sqrt{\sum (x_i - y_i)^2}$$
+              A simple, instance-based learning algorithm. A new data point is classified by a majority vote of its
+              neighbors, with the point being assigned to the class most common among its k nearest neighbors.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for k-Nearest Neighbors.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Recommendation systems</li>
+              <li>visual pattern recognition</li>
+              <li>gene expression analysis.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.pipeline import make_pipeline
+import numpy as np
+
+# Create synthetic data
+X = np.random.rand(100, 3)
+y = np.random.choice([0, 1], size=100)
+
+# Create a pipeline with MinMax scaling and KNN classifier
+model = make_pipeline(MinMaxScaler(), KNeighborsClassifier(n_neighbors=5, metric='euclidean'))
+model.fit(X, y)
+
+# Predict class labels
+X_new = np.random.rand(5, 3)
+y_pred = model.predict(X_new)
+print("KNN Predictions:", y_pred)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="neural-networks" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Supervised Learning</div>
+        <h2 class="algo-title">Neural networks</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \cdot p \cdot h_1 \cdot h_2 \dots)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$a^{(l)} = \sigma(W^{(l)}a^{(l-1)} + b^{(l)})$$
+              A series of algorithms that endeavors to recognize underlying relationships in a set of data through a
+              process that mimics the way the human brain operates.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Neural networks.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Image and speech recognition</li>
+              <li>natural language processing</li>
+              <li>autonomous vehicles.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Define a simple feedforward neural network (Multi-Layer Perceptron)
+class SimpleMLP(nn.Module):
+    def __init__(self, input_dim, hidden_dim, output_dim):
+        super(SimpleMLP, self).__init__()
+        self.network = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, output_dim)
+        )
+        
+    def forward(self, x):
+        return self.network(x)
+
+# Instantiate the model, optimizer, and loss function
+model = SimpleMLP(input_dim=10, hidden_dim=32, output_dim=2)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.01)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gradient-boosting-machines" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Supervised Learning</div>
+        <h2 class="algo-title">Gradient Boosting Machines</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \cdot p \cdot M)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$F_m(x) = F_{m-1}(x) + <br>u \sum \gamma_{im} I(x \in R_{im})$$
+              Produces a prediction model in the form of an ensemble of weak prediction models, typically decision
+              trees. It builds the model in a stage-wise fashion.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Gradient Boosting Machines.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Web search ranking</li>
+              <li>ecology modeling</li>
+              <li>credit risk analysis.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.ensemble import GradientBoostingClassifier
+import numpy as np
+
+# Generate classification data
+X = np.random.rand(100, 5)
+y = np.random.choice([0, 1], size=100)
+
+# Fit GBM model
+model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)
+model.fit(X, y)
+
+# Predict on new sample
+X_new = np.random.rand(2, 5)
+preds = model.predict(X_new)
+print("GBM Predictions:", preds)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="xgboost" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Supervised Learning</div>
+        <h2 class="algo-title">XGBoost</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \cdot p \cdot \log n)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$\mathcal{L}(\phi) = \sum_i l(y_i, \hat{y}_i) + \sum_k \Omega(f_k)$$
+              An optimized distributed gradient boosting library designed to be highly efficient, flexible and portable.
+            </p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for XGBoost.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Kaggle competitions</li>
+              <li>high-energy physics</li>
+              <li>sales forecasting.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import xgboost as xgb
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+# Create synthetic binary classification dataset
+X = np.random.rand(100, 5)
+y = np.random.choice([0, 1], size=100)
+
+# Convert to XGBoost DMatrix format
+dtrain = xgb.DMatrix(X, label=y)
+
+# Set hyperparameters
+params = {
+    'max_depth': 3,
+    'eta': 0.1,
+    'objective': 'binary:logistic',
+    'eval_metric': 'logloss'
+}
+
+# Train the model
+num_round = 50
+bst = xgb.train(params, dtrain, num_round)
+
+# Predict on new data
+X_new = np.random.rand(5, 5)
+dtest = xgb.DMatrix(X_new)
+preds = bst.predict(dtest)
+print("XGBoost Predictions:", preds)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="k-means-clustering" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Unsupervised Learning</div>
+        <h2 class="algo-title">K-means clustering</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(k \cdot n \cdot i \cdot p)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$J = \sum_{j=1}^k \sum_{i=1}^n ||x_i^{(j)} - c_j||^2$$
+              Groups n observations into k clusters in which each observation belongs to the cluster with the nearest
+              mean.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for K-means clustering.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Market segmentation</li>
+              <li>document clustering</li>
+              <li>image compression.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.cluster import KMeans
+import numpy as np
+
+# Create synthetic 2D data with three distinct clusters
+np.random.seed(42)
+X = np.vstack([
+    np.random.randn(50, 2) + [2, 2],
+    np.random.randn(50, 2) + [-2, -2],
+    np.random.randn(50, 2) + [2, -2]
+])
+
+# Initialize and fit K-Means
+kmeans = KMeans(n_clusters=3, random_state=42, n_init='auto')
+kmeans.fit(X)
+
+# Retrieve cluster centers and labels
+centers = kmeans.cluster_centers_
+labels = kmeans.labels_
+print("Cluster Centers:\n", centers)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="hierarchical-clustering" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Unsupervised Learning</div>
+        <h2 class="algo-title">Hierarchical clustering</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n^3)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Agglomerative (bottom-up) or Divisive (top-down). It builds a hierarchy of clusters represented as a
+              dendrogram.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Hierarchical clustering.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Dimensionality reduction: PCA is effective in reducing the dimensionality of
+                high-dimensional data while preserving most of the important information. This can lead to faster
+                computation times, improved memory usage, and better model performance.</li>
+              <li><strong>Pro:</strong> Noise reduction: PCA can help filter out noise and minor variations in the data
+                by focusing on the principal components that capture the most significant variance. This can lead to
+                more robust and generalizable models.</li>
+              <li><strong>Pro:</strong> Visualization: PCA can be used for data visualization in lower-dimensional
+                spaces (2D or 3D), making it easier to understand complex data structures and identify patterns.</li>
+              <li><strong>Pro:</strong> Multicollinearity mitigation: PCA can address multicollinearity issues by
+                creating orthogonal principal components, which can improve model stability and interpretability.</li>
+              <li><strong>Pro:</strong> Pre-processing for Machine Learning: PCA is often used as a pre-processing step
+                in machine learning pipelines to reduce the feature space before applying other algorithms. It can lead
+                to improved model performance and faster training times.</li>
+              <li><strong>Pro:</strong> Feature extraction: PCA can be used for feature extraction, transforming a set
+                of possibly correlated features into a new set of uncorrelated features that retain most of the dataʼs
+                variability.</li>
+              <li><strong>Pro:</strong> Nonlinear dimensionality reduction: t-SNE is well-suited for capturing complex
+                and nonlinear structures in high-dimensional data. It can reveal intricate relationships among data
+                points that may be difficult to detect using linear techniques like PCA.</li>
+              <li><strong>Pro:</strong> Data visualization: t-SNE is widely used for data visualization tasks. It can
+                effectively project high-dimensional data into a lower-dimensional space (e.g., 2D or 3D), making it
+                easier to visualize and interpret complex data patterns, clusters, and trends.</li>
+              <li><strong>Pro:</strong> Preservation of local structure: t-SNE focuses on preserving the local
+                similarities between data points. This property makes it useful for visualizing fine-grained structures
+                and clusters in the data.</li>
+              <li><strong>Pro:</strong> Useful for clustering: t-SNE can be applied as a pre-processing step to improve
+                clustering performance. It helps separate clusters and facilitate the identification of natural
+                groupings in the data.</li>
+              <li><strong>Pro:</strong> Robust to outliers: t-SNE is relatively robust to the presence of outliers in
+                the data. Outliers typically have a low influence on the t-SNE embedding, which helps maintain the
+                integrity of the visualization.</li>
+              <li><strong>Pro:</strong> Visual appeal: t-SNE often produces visually appealing scatter plots, which are
+                intuitive and easy to interpret, making it an attractive tool for data exploration and communication.
+              </li>
+              <li><strong>Pro:</strong> Interpretable rules: ARM generates rules that are easily interpretable. These
+                rules can be understood as if-then statements, which can be useful for understanding relationships and
+                patterns in data.</li>
+              <li><strong>Pro:</strong> Versatility: ARM is not limited to market-basket analysis (its most popular
+                application). It can be applied to any dataset where you want to uncover associations, such as in
+                biology (finding gene patterns), web analytics (understanding user behavior), and so on.</li>
+              <li><strong>Pro:</strong> Minimal domain knowledge required: You do not need extensive domain-specific
+                knowledge to run and get meaningful outputs from ARM. It is an exploratory tool that reveals the
+                underlying structure in the data.</li>
+              <li><strong>Pro:</strong> Modifiability: Parameters like support and confidence can be adjusted to change
+                the strictness of the algorithm, which can be useful depending on the use-case.</li>
+              <li><strong>Pro:</strong> Comprehensive: A priori explores all possible rule combinations and ensures
+                nothing is overlooked, providing a thorough analysis.</li>
+              <li><strong>Con:</strong> Flexibility in the number of clusters: Hierarchical clustering does not require
+                specifying the number of clusters beforehand. Instead, it creates a hierarchy of nested clusters, and
+                the number of clusters can be determined after analyzing the dendrogram. This flexibility is useful when
+                the optimal number of clusters is unknown or can vary across different parts of the data.</li>
+              <li><strong>Con:</strong> Capturing complex structures: Hierarchical clustering can capture complex
+                structures in the data, including clusters of varying sizes, shapes, and densities. It allows for a more
+                nuanced view of the data, especially in situations where data points do not form well-separated
+                clusters.</li>
+              <li><strong>Con:</strong> Visual interpretability: The dendrogram produced by hierarchical clustering
+                provides an intuitive visual representation of the clustering process. Analysts can visually explore the
+                dendrogram and choose the appropriate level of clustering based on the problemʼs requirements.</li>
+              <li><strong>Con:</strong> Connectivity constraints: Hierarchical clustering can incorporate connectivity
+                constraints, allowing the algorithm to respect specific relationships or constraints between data points
+                during the clustering process.</li>
+              <li><strong>Con:</strong> Hierarchical ensemble clustering: Hierarchical clustering can be used in
+                ensemble clustering, where multiple clustering algorithms are combined to improve the overall
+                performance and robustness.</li>
+              <li><strong>Con:</strong> Nested clustering: The hierarchical nature of the output allows for nested
+                clustering, where smaller clusters are naturally grouped into larger clusters. This nested structure can
+                be beneficial for organizing and understanding hierarchical relationships in the data.</li>
+              <li><strong>Con:</strong> Computational complexity: Agglomerative hierarchical clustering can be
+                computationally expensive, especially for large datasets, as it requires O(n^3) operations in the
+                worst-case scenario.</li>
+              <li><strong>Con:</strong> Scalability: Traditional hierarchical clustering can be less scalable compared
+                to other clustering algorithms, particularly for large datasets.</li>
+              <li><strong>Con:</strong> Memory usage: The storage of the distance matrix can be memory-intensive for
+                large datasets.</li>
+              <li><strong>Con:</strong> Sensitivity to distance metric: The performance of hierarchical clustering
+                heavily relies on the choice of distance metrics. Inappropriate distance metrics can lead to suboptimal
+                clustering results.</li>
+              <li><strong>Con:</strong> Single linkage problem: Single linkage hierarchical clustering can suffer from
+                the chaining effect, where clusters are connected by long chains of data points, leading to poor
+                clustering results.</li>
+              <li><strong>Con:</strong> Not suitable for large datasets: Hierarchical clustering can become impractical
+                for datasets with many data points due to its high computational and memory requirements.</li>
+              <li><strong>Con:</strong> Difficulty handling noisy data: Hierarchical clustering can be sensitive to
+                noise in the data, leading to less reliable clustering results in the presence of outliers or noisy data
+                points.</li>
+              <li><strong>Con:</strong> Lack of global optimization: The hierarchical clustering process is a
+                step-by-step merging or splitting of clusters, which may not lead to a globally optimal clustering
+                solution.</li>
+              <li><strong>Con:</strong> Difficulty with irregularly shaped clusters: Traditional hierarchical clustering
+                methods may struggle to handle irregularly shaped clusters or clusters with varying densities.</li>
+              <li><strong>Con:</strong> Real world applications</li>
+              <li><strong>Con:</strong> Loss of interpretability: As PCA creates new features as linear combinations of
+                the original features, the new dimensions may not have direct physical or intuitive meanings. This can
+                reduce the modelʼs interpretability.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Bioinformatics (evolutionary trees)</li>
+              <li>social network analysis.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from scipy.cluster.hierarchy import dendrogram, linkage
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Generate sample data
+X = np.random.rand(10, 2)
+
+# Perform agglomerative hierarchical clustering using Ward's linkage
+Z = linkage(X, method='ward')
+
+# Plot the resulting dendrogram
+plt.figure(figsize=(8, 5))
+dendrogram(Z)
+plt.title("Hierarchical Clustering Dendrogram")
+plt.xlabel("Data Points")
+plt.ylabel("Distance")
+plt.show()</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="principal-component-analysis" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Unsupervised Learning</div>
+        <h2 class="algo-title">Principal Component Analysis</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(p^2 n + p^3)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$Z = XW$$
+              Transforms a large set of variables into a smaller one that still contains most of the information in the
+              large set.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Principal Component Analysis.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Face recognition</li>
+              <li>image compression</li>
+              <li>gene data visualization.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+
+# Create high-dimensional dataset
+X = np.random.rand(100, 10)
+
+# Standardize and project down to 2 principal components
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+print(f"Explained Variance Ratio: {pca.explained_variance_ratio_}")
+print(f"Reduced shape: {X_pca.shape}")</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="t-distributed-stochastic-neighbor-embedding" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Unsupervised Learning</div>
+        <h2 class="algo-title">t-Distributed Stochastic Neighbor Embedding</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n^2)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$P_{j|i} = \frac{\exp(-||x_i - x_j||^2 / 2\sigma_i^2)}{\sum_{k <br>eq i} \exp(-||x_i - x_k||^2 /
+              2\sigma_i^2)}$$
+              A non-linear dimensionality reduction technique well-suited for embedding high-dimensional data for
+              visualization in a low-dimensional space of two or three dimensions.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for t-Distributed Stochastic
+            Neighbor Embedding.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Genomic data visualization</li>
+              <li>computer security (anomaly visualization).</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.manifold import TSNE
+import numpy as np
+
+# Generate high-dimensional synthetic dataset
+X = np.random.rand(100, 50)
+
+# Project high-dimensional features down to 2D embeddings for visualization
+tsne = TSNE(n_components=2, perplexity=30.0, random_state=42)
+X_embedded = tsne.fit_transform(X)
+
+print(f"Embedded Data Shape: {X_embedded.shape}")</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="association-rule-mining" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Unsupervised Learning</div>
+        <h2 class="algo-title">Association Rule Mining</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(2^p)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$Support(A \to B) = P(A \cup B), \quad Confidence(A \to B) = P(B|A)$$
+              Finding frequent patterns, associations, correlations, or causal structures among sets of items in
+              transaction databases.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Association Rule Mining.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Market basket analysis</li>
+              <li>inventory management</li>
+              <li>user behavior analysis.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import pandas as pd
+from mlxtend.frequent_patterns import apriori, association_rules
+from mlxtend.preprocessing import TransactionEncoder
+
+# Transaction dataset representing market baskets
+dataset = [['Milk', 'Onion', 'Nutmeg', 'Kidney Beans', 'Eggs', 'Yogurt'],
+           ['Dill', 'Onion', 'Nutmeg', 'Kidney Beans', 'Eggs', 'Yogurt'],
+           ['Milk', 'Apple', 'Kidney Beans', 'Eggs'],
+           ['Milk', 'Unicorn', 'Corn', 'Kidney Beans', 'Yogurt'],
+           ['Corn', 'Onion', 'Onion', 'Kidney Beans', 'Ice Cream', 'Eggs']]
+
+# Convert transaction list to one-hot encoded dataframe
+te = TransactionEncoder()
+te_ary = te.fit(dataset).transform(dataset)
+df = pd.DataFrame(te_ary, columns=te.columns_)
+
+# Apply Apriori algorithm to identify frequent itemsets
+frequent_itemsets = apriori(df, min_support=0.6, use_colnames=True)
+rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.7)
+print(rules[['antecedents', 'consequents', 'support', 'confidence']])</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="dbscan" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Unsupervised Learning</div>
+        <h2 class="algo-title">DBSCAN</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \log n)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Density-Based Spatial Clustering of Applications with Noise. It groups together points that are closely
+              packed together, marking as outliers points that lie alone in low-density regions.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for DBSCAN.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> No need to specify cluster count: Unlike many clustering algorithms, DBSCAN does
+                not require the user to specify the number of clusters a priori.</li>
+              <li><strong>Pro:</strong> Ability to detect arbitrarily shaped clusters: While methods like k-means assume
+                that clusters are convex and isotropic, DBSCAN can find clusters of any shape, making it more versatile
+                in real-world scenarios.</li>
+              <li><strong>Pro:</strong> Noise handling: DBSCAN is designed to handle noise. During the clustering
+                process, it can identify and exclude outlier data points that do not belong to any cluster.</li>
+              <li><strong>Pro:</strong> Stability: Unlike k-means which can produce different clusters depending on
+                initial conditions, DBSCAN always produces the same clusters when given the same input and parameters.
+              </li>
+              <li><strong>Pro:</strong> No assumption of cluster geometry: DBSCAN does not make strong assumptions about
+                the structure and distribution of clusters, unlike some other algorithms.</li>
+              <li><strong>Pro:</strong> Scalability: With appropriate data structures like KD-Tree or Ball-Tree, DBSCAN
+                can be optimized to handle larger datasets efficiently.</li>
+              <li><strong>Pro:</strong> However, it is essential to understand that the success of DBSCAN in these
+                applications often depends on appropriate parameter settings (like distance threshold and minimum
+                points) and domain-specific knowledge.</li>
+              <li><strong>Pro:</strong> Soft clustering: GMM assigns a probability to each point for every cluster,
+                indicating the likelihood of that point belonging to the cluster. This is more informative than hard
+                clustering methods like k-means, which simply assign a point to the nearest cluster.</li>
+              <li><strong>Pro:</strong> Flexibility in shape: Unlike k-means, which assumes that clusters are spherical,
+                GMM can model elliptical clusters since each Gaussian has its own covariance matrix.</li>
+              <li><strong>Pro:</strong> Density estimation: Beyond clustering, GMMs can be used for estimating the
+                density function of the data.</li>
+              <li><strong>Pro:</strong> Parameter estimation: The EM algorithm, which is used to estimate parameters in
+                GMM, provides a way to get maximum likelihood estimates.</li>
+              <li><strong>Pro:</strong> Well-understood theory: Gaussian processes and the EM algorithm are well
+                studied, which means a lot of resources and theoretical guarantees are available.</li>
+              <li><strong>Con:</strong> A key disadvantage of DBSCAN is that to every point ends up in a cluster which
+                is a challenge for certain applications of clustering.</li>
+              <li><strong>Con:</strong> Parameter sensitivity: DBSCAN requires two parameters, eps and minPts, which can
+                greatly influence the clustering results. Determining the best values for these parameters is not
+                straightforward and often requires domain knowledge or multiple iterations.</li>
+              <li><strong>Con:</strong> Varying density clusters: DBSCAN might struggle with datasets where clusters
+                have varying densities. A single value of eps may not be suitable for all clusters.</li>
+              <li><strong>Con:</strong> Border points: A point that is reachable from two clusters can be part of either
+                cluster, which can sometimes lead to ambiguous results.</li>
+              <li><strong>Con:</strong> Difficulty in high dimensions: The curse of dimensionality affects DBSCAN like
+                many other clustering algorithms. In high-dimensional spaces, the concept of distance becomes less
+                clear, which can impact the efficacy of DBSCAN.</li>
+              <li><strong>Con:</strong> Not well-suited for clusters of different sizes: Clusters of varying sizes and
+                densities might not be effectively captured with a single parameter setting in DBSCAN.</li>
+              <li><strong>Con:</strong> Scalability issues: While optimized structures can make DBSCAN efficient for
+                moderately large datasets, it might still face challenges with extremely large datasets.</li>
+              <li><strong>Con:</strong> GMMs are a popular method in machine learning and statistics for clustering and
+                density estimation. They work by representing a complex distribution as a combination of multiple
+                Gaussian distributions.</li>
+              <li><strong>Con:</strong> Sensitivity to initialization: Like k-means, the results might vary with
+                different initializations. It is common to run the algorithm multiple times to get a good solution.</li>
+              <li><strong>Con:</strong> Risk of overfitting: Because of its flexibility, GMM can sometimes fit noise,
+                leading to overfitting. Regularization techniques or choosing the right number of components can
+                mitigate this.</li>
+              <li><strong>Con:</strong> Complexity: The computational cost can be high, especially when the number of
+                dimensions or components is large. Each step of the EM algorithm involves computing, inverting, and
+                multiplying matrices, which are expensive operations.</li>
+              <li><strong>Con:</strong> Local optima: The EM algorithm can get stuck in local optima. A common practice
+                is to run the algorithm from multiple random starting points.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Geospatial data analysis</li>
+              <li>satellite imagery</li>
+              <li>anomaly detection.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.cluster import DBSCAN
+import numpy as np
+
+# Generate synthetic dataset of density-based clusters
+X = np.vstack([
+    np.random.randn(50, 2) + [2, 2],
+    np.random.randn(50, 2) + [-2, -2],
+    np.random.randn(20, 2) + [0, 8]
+])
+
+# Initialize and fit DBSCAN
+db = DBSCAN(eps=1.0, min_samples=5)
+labels = db.fit_predict(X)
+
+print("Cluster Labels assigned (-1 represents noise):", set(labels))</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gaussian-mixture-models" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Unsupervised Learning</div>
+        <h2 class="algo-title">Gaussian Mixture Models</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \cdot K \cdot p^2)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$p(x) = \sum_{k=1}^K \pi_k \mathcal{N}(x | \mu_k, \Sigma_k)$$
+              A probabilistic model that assumes all the data points are generated from a mixture of a finite number of
+              Gaussian distributions with unknown parameters.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Gaussian Mixture Models.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Customer profiling</li>
+              <li>speech recognition (acoustic modeling)</li>
+              <li>image segmentation.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.mixture import GaussianMixture
+import numpy as np
+
+# Generate synthetic data with two overlapping clusters
+np.random.seed(42)
+X = np.vstack([
+    np.random.randn(100, 2) + [3, 3],
+    np.random.randn(100, 2) + [-3, -3]
+])
+
+# Fit GMM with 2 components
+gmm = GaussianMixture(n_components=2, covariance_type='full', random_state=42)
+gmm.fit(X)
+
+# Predict cluster labels and estimate densities
+labels = gmm.predict(X)
+print("Component Means:\n", gmm.means_)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="autoencoders" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Unsupervised Learning</div>
+        <h2 class="algo-title">Autoencoders</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \cdot p \cdot h)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$L(x, g(f(x)))$$
+              Type of neural network used to learn efficient data codings in an unsupervised manner. The aim is to learn
+              a representation (encoding) for a set of data, typically for dimensionality reduction.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Autoencoders.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Robust feature learning: Deep generative models are excellent at learning a rich
+                set of features from the data. This is particularly useful when the feature space is complex and
+                high-dimensional, such as in images or text.</li>
+              <li><strong>Pro:</strong> Data augmentation: These models can generate new data points that are like the
+                training data, which can be used to augment the training set and improve the performance of the model.
+              </li>
+              <li><strong>Pro:</strong> Robustness to overfitting: Generative models provide a regularizing effect,
+                making them more robust to overfitting, especially when the amount of labeled data is limited.</li>
+              <li><strong>Pro:</strong> Effective use of unlabeled data: VAT is particularly powerful in scenarios where
+                labeled data is scarce. It makes good use of unlabeled data to improve model generalization.</li>
+              <li><strong>Con:</strong> Computational complexity: These models often require more computational
+                resources compared to simpler methods, making them difficult to deploy on systems with limited
+                computational capabilities.</li>
+              <li><strong>Con:</strong> Difficulty in training: Training deep generative models can be challenging due
+                to issues like mode collapse, vanishing/exploding gradients, or getting stuck in local minima.</li>
+              <li><strong>Con:</strong> Hyperparameter sensitivity: The performance can be highly sensitive to the
+                choice of hyperparameters and tuning them can be time-consuming.</li>
+              <li><strong>Con:</strong> Lack of interpretability: Deep generative models are often seen as black boxes,
+                making them difficult to interpret or understand, which is a critical drawback in sensitive applications
+                like healthcare or finance.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Anomaly detection</li>
+              <li>denoising</li>
+              <li>feature learning.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+class Autoencoder(nn.Module):
+    def __init__(self, input_dim, encoding_dim):
+        super(Autoencoder, self).__init__()
+        # Encoder projects down to low-dimensional latent space
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, 64),
+            nn.ReLU(),
+            nn.Linear(64, encoding_dim),
+            nn.ReLU()
+        )
+        # Decoder reconstructs high-dimensional input from latent space
+        self.decoder = nn.Sequential(
+            nn.Linear(encoding_dim, 64),
+            nn.ReLU(),
+            nn.Linear(64, input_dim),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        encoded = self.encoder(x)
+        decoded = self.decoder(encoded)
+        return decoded
+
+model = Autoencoder(input_dim=784, encoding_dim=32)
+criterion = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="anomaly-detection" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Unsupervised Learning</div>
+        <h2 class="algo-title">Anomaly detection</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \log n) \text{ (Isolation Forest)}</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Identifying rare items, events or observations which raise suspicions by differing significantly from the
+              majority of the data.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Anomaly detection.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Highly interpretable baseline model</li>
+              <li><strong>Pro:</strong> Computationally efficient to train</li>
+              <li><strong>Con:</strong> Sensitive to hyperparameters</li>
+              <li><strong>Con:</strong> Struggles with non-linear correlations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Fraud detection</li>
+              <li>system health monitoring</li>
+              <li>network security.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.ensemble import IsolationForest
+import numpy as np
+
+# Create training data with majority inliers
+np.random.seed(42)
+X = np.random.randn(100, 2)
+
+# Fit Isolation Forest
+clf = IsolationForest(contamination=0.1, random_state=42)
+clf.fit(X)
+
+# Predict anomaly score (-1 for anomalies, 1 for inliers)
+X_test = np.array([[0.1, -0.2], [5.0, 5.0]])
+predictions = clf.predict(X_test)
+print("Isolation Forest Predictions:", predictions)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="latent-dirichlet-allocation" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Unsupervised Learning</div>
+        <h2 class="algo-title">Latent Dirichlet Allocation</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n \cdot k)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$p(D|\alpha, \beta) = \prod_{d=1}^M \int p(\theta_d|\alpha) \prod_{n=1}^{N_d} \sum_{z_{dn}}
+              p(z_{dn}|\theta_d) p(w_{dn}|z_{dn}, \beta) d\theta_d$$
+              A generative statistical model that allows sets of observations to be explained by unobserved groups that
+              explain why some parts of the data are similar.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Latent Dirichlet Allocation.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Excellent interpretability for large collections of unstructured text</li>
+              <li><strong>Pro:</strong> Works well as a generative document-topic clustering mechanism</li>
+              <li><strong>Con:</strong> Suffers from computational scaling issues on massive corpora</li>
+              <li><strong>Con:</strong> Requires manual pre-specification of topic parameter k</li>
+              <li><strong>Con:</strong> Sensitive to document length and vocabulary preprocessing</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Topic modeling</li>
+              <li>document classification</li>
+              <li>image labeling.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.decomposition import LatentDirichletAllocation
+from sklearn.feature_extraction.text import CountVectorizer
+import numpy as np
+
+# Dummy collection of text documents
+documents = [
+    "Machine learning neural networks algorithms and data science training",
+    "Deep learning artificial neural networks model validation techniques",
+    "Customer segmentation and market basket association rules classification",
+    "Clustering and dimensional reduction techniques with PCA and K-Means"
+]
+
+# Extract feature frequencies
+vectorizer = CountVectorizer(stop_words='english')
+X = vectorizer.fit_transform(documents)
+
+# Fit Latent Dirichlet Allocation (LDA) for topic modeling
+lda = LatentDirichletAllocation(n_components=2, random_state=42)
+lda.fit(X)
+
+print("Topic word distribution shapes:", lda.components_.shape)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="q-learning" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Reinforcement Learning</div>
+        <h2 class="algo-title">Q-Learning</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(|S| \cdot |A|)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$Q(s, a) \leftarrow Q(s, a) + \alpha [r + \gamma \max_{a'} Q(s', a') - Q(s, a)]$$
+              A model-free reinforcement learning algorithm to learn the quality of actions telling an agent what action
+              to take under what circumstances.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Q-Learning.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Model-free approach requiring zero environment dynamics information</li>
+              <li><strong>Pro:</strong> Tabular settings offer robust mathematical convergence guarantees</li>
+              <li><strong>Con:</strong> Suffers severely from the curse of dimensionality in large state spaces</li>
+              <li><strong>Con:</strong> Overestimation bias of Q-values due to the max operator</li>
+              <li><strong>Con:</strong> High variance during early exploration stages</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Pathfinding</li>
+              <li>game AI</li>
+              <li>resource management.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import numpy as np
+
+class QLearningAgent:
+    def __init__(self, states_count, actions_count, alpha=0.1, gamma=0.9, epsilon=0.1):
+        self.q_table = np.zeros((states_count, actions_count))
+        self.alpha = alpha      # Learning rate
+        self.gamma = gamma      # Discount factor
+        self.epsilon = epsilon  # Exploration rate
+
+    def choose_action(self, state):
+        if np.random.uniform(0, 1) &lt; self.epsilon:
+            return np.random.choice(self.q_table.shape[1])  # Explore
+        else:
+            return np.argmax(self.q_table[state])           # Exploit
+
+    def learn(self, state, action, reward, next_state):
+        predict = self.q_table[state, action]
+        target = reward + self.gamma * np.max(self.q_table[next_state])
+        self.q_table[state, action] += self.alpha * (target - predict)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="deep-q-networks" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Reinforcement Learning</div>
+        <h2 class="algo-title">Deep Q-Networks</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Network parameters})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$L(\theta) = \mathbb{E}[(r + \gamma \max_{a'} Q(s', a'; \theta^-) - Q(s, a; \theta))^2]$$
+              Combines Q-Learning with deep neural networks. It uses experience replay and target networks to stabilize
+              learning.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Deep Q-Networks.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Extends Q-learning to high-dimensional state spaces (e.g. raw pixels)</li>
+              <li><strong>Pro:</strong> Experience replay buffer breaks temporal correlations, stabilizing training</li>
+              <li><strong>Con:</strong> High sample inefficiency</li>
+              <li><strong>Con:</strong> Struggles with continuous action spaces</li>
+              <li><strong>Con:</strong> Training can be unstable and highly sensitive to hyperparameter tuning</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Atari games</li>
+              <li>robotics control</li>
+              <li>autonomous driving.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+import numpy as np
+
+class DQN(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super(DQN, self).__init__()
+        self.network = nn.Sequential(
+            nn.Linear(state_dim, 64),
+            nn.ReLU(),
+            nn.Linear(64, 64),
+            nn.ReLU(),
+            nn.Linear(64, action_dim)
+        )
+    def forward(self, state):
+        return self.network(state)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="policy-gradient-methods" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Reinforcement Learning</div>
+        <h2 class="algo-title">Policy gradient methods</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Policy parameters})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$<br>abla_\theta J(\theta) = \mathbb{E}_\pi [<br>abla_\theta \log \pi_\theta(a|s) G_t]$$
+              A class of reinforcement learning algorithms that optimize the policy directly using gradient descent.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Policy gradient methods.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Directly optimizes the policy objective</li>
+              <li><strong>Pro:</strong> Naturally handles continuous and stochastic action spaces</li>
+              <li><strong>Pro:</strong> Smooth convergence properties compared to value-based methods</li>
+              <li><strong>Con:</strong> Very high variance in gradient estimates</li>
+              <li><strong>Con:</strong> Prone to getting trapped in suboptimal local optima</li>
+              <li><strong>Con:</strong> Extremely poor sample efficiency</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Robotics</li>
+              <li>financial trading</li>
+              <li>continuous control tasks.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+class PolicyNetwork(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super(PolicyNetwork, self).__init__()
+        self.fc = nn.Sequential(
+            nn.Linear(state_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, action_dim),
+            nn.Softmax(dim=-1)
+        )
+    def forward(self, x):
+        return self.fc(x)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="advantage-actor-critic" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Reinforcement Learning</div>
+        <h2 class="algo-title">Advantage Actor-Critic</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Actor + Critic parameters})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$A(s, a) = Q(s, a) - V(s)$$
+              A synchronous reinforcement learning method where multiple agents interact with their environments
+              simultaneously.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Advantage Actor-Critic.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Synchronous updates allow parallelized, highly efficient training across
+                multiple environments</li>
+              <li><strong>Pro:</strong> Critic baseline reduces policy gradient variance</li>
+              <li><strong>Con:</strong> Relies on highly synchronized steps, causing bottlenecks if environment steps
+                take variable time</li>
+              <li><strong>Con:</strong> Complex model architecture to balance and tune</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Real-time strategy games</li>
+              <li>robot locomotion.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+class ActorCritic(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super(ActorCritic, self).__init__()
+        # Shared feature extractor
+        self.common = nn.Sequential(
+            nn.Linear(state_dim, 128),
+            nn.ReLU()
+        )
+        self.actor = nn.Linear(128, action_dim)      # Policy head
+        self.critic = nn.Linear(128, 1)              # Value head
+
+    def forward(self, state):
+        x = self.common(state)
+        policy_dist = torch.softmax(self.actor(x), dim=-1)
+        state_value = self.critic(x)
+        return policy_dist, state_value</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="trust-region-policy-optimization" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Reinforcement Learning</div>
+        <h2 class="algo-title">Trust Region Policy Optimization</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{High due to Hessian calculation})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$\max_{\theta} \mathbb{E} [\frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} A_{\theta_{old}}(s, a)]
+              \text{ s.t. } KL(\pi_{\theta_{old}} || \pi_\theta) \leq \delta$$
+              Optimizes policies with a guarantee of monotonic improvement by constraining the policy update.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Trust Region Policy
+            Optimization.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Guarantees monotonic policy improvement</li>
+              <li><strong>Pro:</strong> Mathematical constraints prevent destructive large updates, ensuring high sample
+                safety</li>
+              <li><strong>Con:</strong> Computationally expensive due to calculating the Hessian of the KL divergence
+              </li>
+              <li><strong>Con:</strong> Extremely complex implementation relying on Conjugate Gradient methods</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Complex robotic tasks</li>
+              <li>simulated locomotion.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+
+class TRPOObjective(nn.Module):
+    def __init__(self):
+        super(TRPOObjective, self).__init__()
+
+    def forward(self, new_probs, old_probs, advantages):
+        # Surrogate advantage loss
+        ratio = new_probs / (old_probs + 1e-8)
+        surrogate_loss = ratio * advantages
+        return -torch.mean(surrogate_loss)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="asynchronous-advantage-actor-critic" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Reinforcement Learning</div>
+        <h2 class="algo-title">Asynchronous Advantage Actor-Critic</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Actor + Critic parameters})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Asynchronous version of A2C where multiple worker threads update a global model asynchronously.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Asynchronous Advantage
+            Actor-Critic.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Asynchronous updates break temporal correlations without an experience replay
+                buffer</li>
+              <li><strong>Pro:</strong> Faster training times by utilizing multiple CPU/GPU worker threads</li>
+              <li><strong>Con:</strong> Thread-unsynchronized parameter updates can lead to instability</li>
+              <li><strong>Con:</strong> Complex multiprocessing architecture</li>
+              <li><strong>Con:</strong> Hard to debug thread race conditions</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Complex 3D simulations</li>
+              <li>multi-agent systems.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+import torch.multiprocessing as mp
+
+class GlobalNetwork(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super(GlobalNetwork, self).__init__()
+        self.fc = nn.Linear(state_dim, 128)
+        self.actor = nn.Linear(128, action_dim)
+        self.critic = nn.Linear(128, 1)
+
+    def forward(self, x):
+        h = torch.relu(self.fc(x))
+        return torch.softmax(self.actor(h), dim=-1), self.critic(h)
+
+# Shared optimizer across worker processes
+class SharedAdam(torch.optim.Adam):
+    def __init__(self, params, lr=1e-3):
+        super(SharedAdam, self).__init__(params, lr=lr)
+        for group in self.param_groups:
+            for p in group['params']:
+                state = self.state[p]
+                state['step'] = 0
+                state['exp_avg'] = torch.zeros_like(p.data)
+                state['exp_avg_sq'] = torch.zeros_like(p.data)
+                state['exp_avg'].share_memory_()
+                state['exp_avg_sq'].share_memory_()</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="proximal-policy-optimization" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Reinforcement Learning</div>
+        <h2 class="algo-title">Proximal Policy Optimization</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Scales with data})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$L^{CLIP}(\theta) = \mathbb{E} [\min(r_t(\theta) \hat{A}_t, \text{clip}(r_t(\theta), 1-\epsilon,
+              1+\epsilon) \hat{A}_t)]$$
+              A simpler-to-implement and more stable alternative to TRPO using a clipped objective function.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Proximal Policy Optimization.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Provides stability and monotonic guarantees of TRPO but with much simpler,
+                computationally cheaper first-order gradient updates</li>
+              <li><strong>Pro:</strong> Widely considered the industry benchmark for general reinforcement learning</li>
+              <li><strong>Con:</strong> High sample complexity</li>
+              <li><strong>Con:</strong> Sensitive to clipping hyperparameter epsilon and value loss scaling</li>
+              <li><strong>Con:</strong> Policy can occasionally become overly conservative in exploration</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>OpenAI Five (Dota 2)</li>
+              <li>robotics</li>
+              <li>general RL benchmark.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+
+class PPOLoss(nn.Module):
+    def __init__(self, clip_eps=0.2):
+        super(PPOLoss, self).__init__()
+        self.clip_eps = clip_eps
+
+    def forward(self, new_probs, old_probs, advantages):
+        # Probability ratio r_t(theta)
+        ratio = new_probs / (old_probs + 1e-8)
+        surr1 = ratio * advantages
+        surr2 = torch.clamp(ratio, 1.0 - self.clip_eps, 1.0 + self.clip_eps) * advantages
+        # Clipped surrogate objective
+        return -torch.mean(torch.min(surr1, surr2))</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="deep-deterministic-policy-gradient" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Reinforcement Learning</div>
+        <h2 class="algo-title">Deep Deterministic Policy Gradient</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Actor + Critic parameters})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Actor-critic, model-free algorithm for continuous action spaces. It uses the deterministic policy
+              gradient theorem.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Deep Deterministic Policy
+            Gradient.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Sample-efficient off-policy method designed specifically for high-dimensional,
+                continuous action spaces</li>
+              <li><strong>Con:</strong> High instability during training due to overestimation bias</li>
+              <li><strong>Con:</strong> Very sensitive to hyperparameter tuning and noise exploration parameters</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Mechanical control</li>
+              <li>industrial process optimization.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+
+class DeterministicActor(nn.Module):
+    def __init__(self, state_dim, action_dim, max_action):
+        super(DeterministicActor, self).__init__()
+        self.net = nn.Sequential(
+            nn.Linear(state_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, action_dim),
+            nn.Tanh()
+        )
+        self.max_action = max_action
+
+    def forward(self, state):
+        return self.max_action * self.net(state)
+
+class Critic(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super(Critic, self).__init__()
+        self.fc1 = nn.Linear(state_dim + action_dim, 128)
+        self.fc2 = nn.Linear(128, 1)
+
+    def forward(self, state, action):
+        x = torch.cat([state, action], dim=-1)
+        return self.fc2(torch.relu(self.fc1(x)))</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="twin-delayed-deep-deterministic-policy-gradient" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Reinforcement Learning</div>
+        <h2 class="algo-title">Twin Delayed Deep Deterministic Policy Gradient</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Higher than DDPG})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Addresses overestimation bias in DDPG using twin Q-networks and delayed policy updates.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Twin Delayed Deep
+            Deterministic Policy Gradient.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Mitigates the overestimation bias of DDPG using twin critic networks and delayed
+                policy updates</li>
+              <li><strong>Pro:</strong> Significantly more stable and robust than baseline DDPG</li>
+              <li><strong>Con:</strong> High hyperparameter sensitivity</li>
+              <li><strong>Con:</strong> Computationally slower than DDPG per update step</li>
+              <li><strong>Con:</strong> Still suffers from general off-policy RL sample inefficiencies</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>High-precision robotics</li>
+              <li>fluid dynamics control.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+
+class TD3TwinCritic(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super(TD3TwinCritic, self).__init__()
+        # Critic network 1
+        self.q1 = nn.Sequential(
+            nn.Linear(state_dim + action_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, 1)
+        )
+        # Critic network 2 (Twin)
+        self.q2 = nn.Sequential(
+            nn.Linear(state_dim + action_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, 1)
+        )
+
+    def forward(self, state, action):
+        xu = torch.cat([state, action], dim=-1)
+        return self.q1(xu), self.q2(xu)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="soft-actor-critic" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Reinforcement Learning</div>
+        <h2 class="algo-title">Soft Actor-Critic</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Actor + Critic parameters})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>$$J(\pi) = \sum_t \mathbb{E}_{(s_t, a_t) \sim \rho_\pi} [r(s_t, a_t) + \alpha
+              \mathcal{H}(\pi(\cdot|s_t))]$$
+              Maximum entropy RL algorithm that provides sample-efficient learning and robustness.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Soft Actor-Critic.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Maximum entropy framework encourages aggressive exploration, resulting in
+                exceptional sample efficiency and robust policies that generalize well</li>
+              <li><strong>Con:</strong> Highly sensitive to the temperature parameter alpha (requires auto-tuning)</li>
+              <li><strong>Con:</strong> Challenging to balance actor and twin critic networks</li>
+              <li><strong>Con:</strong> High computational overhead per gradient update</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Real-world robot manipulation</li>
+              <li>complex motor tasks.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.distributions import Normal
+
+class GaussianPolicy(nn.Module):
+    def __init__(self, state_dim, action_dim, log_std_min=-20, log_std_max=2):
+        super(GaussianPolicy, self).__init__()
+        self.fc = nn.Linear(state_dim, 128)
+        self.mean = nn.Linear(128, action_dim)
+        self.log_std = nn.Linear(128, action_dim)
+        self.log_std_min = log_std_min
+        self.log_std_max = log_std_max
+
+    def forward(self, state):
+        x = F.relu(self.fc(state))
+        mean = self.mean(x)
+        log_std = self.log_std(x)
+        log_std = torch.clamp(log_std, self.log_std_min, self.log_std_max)
+        return mean, log_std
+
+    def sample(self, state):
+        mean, log_std = self.forward(state)
+        std = log_std.exp()
+        normal = Normal(mean, std)
+        x_t = normal.rsample()  # Reparameterization trick
+        action = torch.tanh(x_t)
+        return action</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="self-training" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Semi-supervised Learning</div>
+        <h2 class="algo-title">Self-training</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(I \cdot n \cdot p) \text{ where } I \text{ is iterations}</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Iterative process where a model labels unlabeled data and retrains on its own predictions.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Self-training.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Simple, conceptual framework that can leverage any standard base classifier</li>
+              <li><strong>Pro:</strong> Highly cost-effective by utilizing unlabeled datasets without external
+                annotations</li>
+              <li><strong>Con:</strong> Danger of error reinforcement where early incorrect predictions are
+                pseudo-labeled and degrade model performance over iterations</li>
+              <li><strong>Con:</strong> Highly dependent on a good initial labeled set</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>NLP (with small labeled data)</li>
+              <li>medical image classification.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.semi_supervised import SelfTrainingClassifier
+from sklearn.svm import SVC
+import numpy as np
+
+# Prepare semi-supervised dataset (unlabeled marked as -1)
+X = np.random.rand(150, 4)
+y = np.random.choice([0, 1], size=150)
+y[100:] = -1  # Mask 50 labels as unlabeled
+
+# Train a Self-Training model using SVM classifier with probability estimates
+svc = SVC(probability=True, kernel='linear')
+self_training_model = SelfTrainingClassifier(svc, threshold=0.75)
+self_training_model.fit(X, y)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="co-training" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Semi-supervised Learning</div>
+        <h2 class="algo-title">Co-training</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(I \cdot n \cdot p)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Two classifiers are trained on different views of the data and iteratively provide each other with
+              labeled examples.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Co-training.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> High sample efficiency by using independent disjoint feature views to
+                cross-label samples</li>
+              <li><strong>Pro:</strong> Highly robust to early pseudo-label noise compared to self-training</li>
+              <li><strong>Con:</strong> Requires the strict assumption of view independence and sufficiency (which is
+                extremely rare and difficult to satisfy in real-world datasets)</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Web page classification</li>
+              <li>multi-modal biometrics.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import numpy as np
+from sklearn.naive_bayes import GaussianNB
+
+class CoTrainingClassifier:
+    def __init__(self, clf1=GaussianNB(), clf2=GaussianNB(), p=1, n=1):
+        self.clf1 = clf1  # Classifier for view 1
+        self.clf2 = clf2  # Classifier for view 2
+        self.p = p        # Positive samples to add per iteration
+        self.n = n        # Negative samples to add per iteration
+
+    def fit(self, X1, X2, y):
+        # Simple co-training algorithm framework
+        # X1 is feature view 1, X2 is feature view 2
+        # Train base classifiers on initial labeled set
+        labeled_idx = np.where(y != -1)[0]
+        self.clf1.fit(X1[labeled_idx], y[labeled_idx])
+        self.clf2.fit(X2[labeled_idx], y[labeled_idx])</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="multi-view-learning" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Semi-supervised Learning</div>
+        <h2 class="algo-title">Multi-view learning</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Depends on base models})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Learning from multiple distinct feature sets (views) to improve performance.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Multi-view learning.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Integrates heterogeneous data representations (e.g., audio and video) into a
+                unified projection</li>
+              <li><strong>Pro:</strong> Enhances generalization by utilizing complementary features</li>
+              <li><strong>Con:</strong> High computational cost of aligning views</li>
+              <li><strong>Con:</strong> Sensitive to missing views or noise in a single channel</li>
+              <li><strong>Con:</strong> Requires specialized co-regularization algorithms</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Video analysis (audio + visual)</li>
+              <li>multi-sensor fusion.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import numpy as np
+from sklearn.decomposition import CCA
+
+class MultiViewRepresentation:
+    def __init__(self, n_components=2):
+        self.cca = CCA(n_components=n_components)
+
+    def fit_transform(self, X1, X2):
+        # Canonical Correlation Analysis to find a shared latent space
+        self.cca.fit(X1, X2)
+        X1_c, X2_c = self.cca.transform(X1, X2)
+        # Fuse projections by concatenation
+        return np.hstack([X1_c, X2_c])</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="expectation-maximization" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Semi-supervised Learning</div>
+        <h2 class="algo-title">Expectation-Maximization</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(I \cdot n \cdot p)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Iterative method to find maximum likelihood estimates of parameters in models with latent variables.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Expectation-Maximization.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Elegant, mathematically rigorous framework for fitting latent variable models
+              </li>
+              <li><strong>Pro:</strong> Guarantees monotonic convergence of log-likelihood</li>
+              <li><strong>Con:</strong> Prone to getting trapped in local maxima</li>
+              <li><strong>Con:</strong> Highly sensitive to initial parameter seeding</li>
+              <li><strong>Con:</strong> Computationally slow for large datasets</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Clustering (GMM)</li>
+              <li>missing data imputation</li>
+              <li>HMM training.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.mixture import GaussianMixture
+import numpy as np
+
+# EM clustering via GMM model
+X = np.random.rand(100, 2)
+gmm = GaussianMixture(n_components=3, covariance_type='full')
+gmm.fit(X)
+labels = gmm.predict(X)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="graph-based-methods" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Semi-supervised Learning</div>
+        <h2 class="algo-title">Graph-based methods</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(n^2) \text{ or } O(n^3)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Model data as a graph and propagate labels through edges based on similarity.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Graph-based methods.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Captures complex, non-linear manifold structures of data</li>
+              <li><strong>Pro:</strong> Extremely effective at propagating labels when very few labeled nodes exist</li>
+              <li><strong>Con:</strong> Highly sensitive to the quality of graph construction (edge weights)</li>
+              <li><strong>Con:</strong> Does not scale well computationally to large datasets due to graph Laplacian
+                inversion costs</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Social network classification</li>
+              <li>protein-protein interaction prediction.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>from sklearn.semi_supervised import LabelSpreading
+import numpy as np
+
+X = np.random.rand(100, 2)
+y = np.random.choice([0, 1], size=100)
+y[75:] = -1  # Unlabeled nodes
+
+model = LabelSpreading(kernel='knn', alpha=0.2)
+model.fit(X, y)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="transductive-support-vector-machines" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Semi-supervised Learning</div>
+        <h2 class="algo-title">Transductive Support Vector Machines</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(2^{n_{unlabeled}} \cdot n^3) \text{ (approximate algorithms exist)}
+      </div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Extends SVM to semi-supervised learning by maximizing the margin on both labeled and unlabeled data.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Transductive Support Vector
+            Machines.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Maximizes the margin over both labeled and unlabeled data, providing strong
+                generalization bounds on small datasets</li>
+              <li><strong>Con:</strong> Non-convex optimization problem that is computationally NP-hard to solve exactly
+              </li>
+              <li><strong>Con:</strong> Approximate methods are sensitive to initialization</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Text classification where unlabeled data is available at training time.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import numpy as np
+from sklearn.svm import SVC
+
+class SimpleTSVM:
+    def __init__(self, C=1.0, cl_unlabeled=0.1):
+        self.C = C
+        self.cl_unlabeled = cl_unlabeled
+        self.clf = SVC(kernel='linear', C=C)
+
+    def fit(self, X_labeled, y_labeled, X_unlabeled):
+        # Initial supervised training on labeled set
+        self.clf.fit(X_labeled, y_labeled)
+        # Predict pseudo-labels for unlabeled points
+        pseudo_labels = self.clf.predict(X_unlabeled)
+        # Iteratively train on combined labeled &amp; pseudo-labeled points
+        X_combined = np.vstack([X_labeled, X_unlabeled])
+        y_combined = np.hstack([y_labeled, pseudo_labels])
+        self.clf.fit(X_combined, y_combined)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="co-regularization" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Semi-supervised Learning</div>
+        <h2 class="algo-title">Co-regularization</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Depends on base models})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Minimizes a loss function that includes a penalty for disagreement between classifiers trained on
+              different views.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Co-regularization.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Enforces agreement across different feature representations, providing robust
+                regularization constraints that limit overfitting</li>
+              <li><strong>Con:</strong> Requires multi-view feature setups</li>
+              <li><strong>Con:</strong> High hyperparameter sensitivity</li>
+              <li><strong>Con:</strong> Complex joint loss optimization</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Multi-view clustering</li>
+              <li>collaborative filtering.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import numpy as np
+from sklearn.linear_model import Ridge
+
+class CoRegularizedRegression:
+    def __init__(self, alpha=1.0, mu=0.5):
+        self.clf1 = Ridge(alpha=alpha)
+        self.clf2 = Ridge(alpha=alpha)
+        self.mu = mu  # Agreement regularization weight
+
+    def fit(self, X1_labeled, X2_labeled, y_labeled, X1_unlabeled, X2_unlabeled, iterations=5):
+        # Iterative update minimizing self-loss and view disagreement
+        for _ in range(iterations):
+            self.clf1.fit(X1_labeled, y_labeled)
+            self.clf2.fit(X2_labeled, y_labeled)
+            # Regularize towards agreement on unlabeled data
+            pred1 = self.clf1.predict(X1_unlabeled)
+            pred2 = self.clf2.predict(X2_unlabeled)
+            # Adjust targets using multi-view consensus
+            y_unlabeled = 0.5 * (pred1 + pred2)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="deep-generative-models" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Semi-supervised Learning</div>
+        <h2 class="algo-title">Deep generative models</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Network parameters})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Models like VAEs or GANs that learn to generate new data samples from the same distribution as the
+              training data.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Deep generative models.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Outstanding capacity to learn complex, high-dimensional target distributions
+              </li>
+              <li><strong>Pro:</strong> Creates high-fidelity synthetic samples for data augmentation</li>
+              <li><strong>Con:</strong> High training instability (e.g., mode collapse in GANs)</li>
+              <li><strong>Con:</strong> Challenging to evaluate generation quality</li>
+              <li><strong>Con:</strong> High computational and memory footprint</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Image synthesis</li>
+              <li>data augmentation</li>
+              <li>anomaly detection.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+
+class VariationalAutoencoder(nn.Module):
+    def __init__(self, input_dim, latent_dim):
+        super(VariationalAutoencoder, self).__init__()
+        # Encoder projects inputs to latent distribution parameters
+        self.fc_enc = nn.Linear(input_dim, 64)
+        self.fc_mu = nn.Linear(64, latent_dim)
+        self.fc_logvar = nn.Linear(64, latent_dim)
+        # Decoder generates samples from latent vector
+        self.fc_dec1 = nn.Linear(latent_dim, 64)
+        self.fc_dec2 = nn.Linear(64, input_dim)
+
+    def reparameterize(self, mu, logvar):
+        std = torch.exp(0.5 * logvar)
+        eps = torch.randn_like(std)
+        return mu + eps * std  # Latent sampling trick
+
+    def forward(self, x):
+        h = torch.relu(self.fc_enc(x))
+        mu, logvar = self.fc_mu(h), self.fc_logvar(h)
+        z = self.reparameterize(mu, logvar)
+        reconstruction = torch.sigmoid(self.fc_dec2(torch.relu(self.fc_dec1(z))))
+        return reconstruction, mu, logvar</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="virtual-adversarial-training" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Semi-supervised Learning</div>
+        <h2 class="algo-title">Virtual Adversarial Training</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(\text{Standard training + perturbation cost})</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Regularizes the model by making it robust to virtual adversarial perturbations in the input space.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Virtual Adversarial Training.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Local distribution robustness regularizer that does not require labeled data
+              </li>
+              <li><strong>Pro:</strong> Yields outstanding classification boundaries by pushing model to be robust
+                against adversarial perturbations</li>
+              <li><strong>Con:</strong> High computational overhead due to multiple forward/backward passes to estimate
+                the adversarial perturbation direction</li>
+              <li><strong>Con:</strong> Sensitive to perturbation epsilon</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Semi-supervised image classification</li>
+              <li>NLP robustness.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class VATLoss(nn.Module):
+    def __init__(self, xi=1e-6, eps=1.0, ip=1):
+        super(VATLoss, self).__init__()
+        self.xi = xi      # Perturbation scale for gradient approximation
+        self.eps = eps    # Adversarial epsilon bound
+        self.ip = ip      # Power iterations count
+
+    def forward(self, model, x):
+        # Generate virtual adversarial perturbation to maximize KL divergence
+        with torch.no_grad():
+            pred = F.softmax(model(x), dim=-1)
+        d = torch.randn_like(x)
+        d = F.normalize(d, p=2, dim=-1)
+        for _ in range(self.ip):
+            d.requires_grad_()
+            pred_hat = F.softmax(model(x + self.xi * d), dim=-1)
+            kl = F.kl_div(pred_hat.log(), pred, reduction='batchmean')
+            kl.backward()
+            d = F.normalize(d.grad, p=2, dim=-1)
+        r_vadv = self.eps * d
+        return r_vadv</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tri-training" class="algo-section ">
+      <div class="algo-header">
+        <div class="algo-category">Semi-supervised Learning</div>
+        <h2 class="algo-title">Tri-training</h2>
+      </div>
+
+      <div class="complexity-badge">Complexity: O(3 \cdot I \cdot n \cdot p)</div>
+
+      <div class="card-grid">
+        <!-- Mathematical Foundation -->
+        <div class="card">
+          <div class="card-title">
+            <span>📐</span> Mathematical Foundation
+          </div>
+          <div class="card-content">
+            <p>Uses three classifiers; an unlabeled sample is labeled if two of the three classifiers agree on the
+              label.</p>
+          </div>
+        </div>
+
+        <!-- Visual Representation -->
+        <div class="image-placeholder">
+          <div class="image-placeholder-icon">📊</div>
+          <div><strong>Visual Representation Placeholder</strong></div>
+          <div style="font-size: 0.85rem; margin-top: 0.5rem; max-width: 500px;">
+            Interactive visualization plot of the decision surface/learned parameters for Tri-training.
+          </div>
+        </div>
+
+        <!-- Trade-offs -->
+        <div class="card">
+          <div class="card-title tradeoffs">
+            <span>⚖️</span> Trade-offs (Pros & Cons)
+          </div>
+          <div class="card-content tradeoffs">
+            <ul>
+              <li><strong>Pro:</strong> Eliminates the view independence requirement of Co-training by utilizing
+                bootstrap sampling to construct three diverse classifiers</li>
+              <li><strong>Pro:</strong> Highly robust to pseudo-labeling noise</li>
+              <li><strong>Con:</strong> High computational overhead (requires training and querying three separate
+                classifiers)</li>
+              <li><strong>Con:</strong> Consensus voting can occasionally collapse if two classifiers synchronize
+                incorrect predictions</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎯</span> Real-World Applications
+          </div>
+          <div class="card-content">
+            <ul>
+              <li>Spam detection</li>
+              <li>fraud detection</li>
+              <li>NLU.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Python Implementation -->
+        <div class="card">
+          <div class="card-title">
+            <span>💻</span> Python Source Code
+          </div>
+          <div class="card-content">
+            <pre class="code-block"><code>import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+
+class TriTrainingClassifier:
+    def __init__(self, clf1=DecisionTreeClassifier(), clf2=DecisionTreeClassifier(), clf3=DecisionTreeClassifier()):
+        self.clfs = [clf1, clf2, clf3]
+
+    def fit(self, X, y):
+        # X contains both labeled and unlabeled data, unlabeled y marked as -1
+        labeled_idx = np.where(y != -1)[0]
+        unlabeled_idx = np.where(y == -1)[0]
+        # Train three independent classifiers using bootstrap sampling
+        for clf in self.clfs:
+            bootstrap = np.random.choice(labeled_idx, size=len(labeled_idx), replace=True)
+            clf.fit(X[bootstrap], y[bootstrap])</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div> <!-- Close main-content -->
+  <script>
+    function showAlgo(id) {
+      // Hide all sections
+      document.querySelectorAll('.algo-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      // Show clicked section
+      document.getElementById(id).classList.add('active');
+
+      // Update nav item active state
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      document.getElementById('nav-' + id).classList.add('active');
+
+      // Smooth scroll to top of content
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
 </body>
+
 </html>
